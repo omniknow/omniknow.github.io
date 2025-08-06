@@ -1,0 +1,284 @@
+<div>
+  <h1>專題名稱：大台中房市分析-太平篇</h1>
+  <h2>指導老師：梁國亮 老師</h2>
+  <h2>指導老師：林叔伶 老師</h2>
+  <h2>學生姓名：范智軒</h2>
+  <h2>發表日期：2025年8月4日</h2>
+</div>
+<div id="summary">
+<div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%;">
+  <iframe title="bike"
+    src="https://app.powerbi.com/reportEmbed?reportId=414ae9f5-632e-4b6f-ae71-a79aeae9fdf2&autoAuth=true&ctid=38c234ae-7725-479d-81a1-9b6d2fa56530"
+    frameborder="0" allowFullScreen="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+  </iframe>
+</div>    
+    <table>
+        <thead>
+            <tr>
+                <th>大台中房市分析－太平篇－內容索引<a href="https://app.powerbi.com/reportEmbed?reportId=414ae9f5-632e-4b6f-ae71-a79aeae9fdf2&autoAuth=true&ctid=38c234ae-7725-479d-81a1-9b6d2fa56530" target="_blank">點我看圖表</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#content1">一、研究動機</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content2">二、資料取得與處理流程-ETL</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content3">三、初步成果與分析期待</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content4">四、台中市不動產成交趨勢</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content5">五、行政區交易探討-屋齡</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content6">六、太平區在售物件分析</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content7">七、我的分析與結論</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content8">八、資料來源</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content9">九、深深的感謝您</a></td>
+            </tr>
+            <tr>
+                <td><a href="#content10">十、專題檔案下載</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+  
+  
+  
+  <section>
+    <h1>大台中房市分析－太平篇</h1>
+    <h2 id="content1">一、研究動機</h2>
+    <p>我住在太平，想買房，但對房市並不熟悉，心中充滿許多疑惑：</p>
+    <ul>
+      <li>現在的房價是否昂貴？</li>
+      <li>總價是否合理？</li>
+      <li>哪些區域的房屋類型較多？</li>
+      <li>現在有很多新房子可以選嗎？會不會都是老房子呢？</li>
+      <li>房仲網的價錢是不是行情價？還有議價空間嗎？</li>
+    </ul>
+    <p>如果有人能幫我解答這些問題，那就太好了！</p>
+  </section>
+
+  <section>
+    <h2 id="content2">二、資料取得與處理流程-ETL</h2>
+    <blockquote>老師有說過:「政府提供許多公開資料，直接搜尋下載就好；沒有的，只要資料在網頁上出現，就用爬蟲技巧自己抓，沒什麼大問題。」</blockquote>
+    <p>於是我決定，這次就把老師傳授的 <strong>ETL 整個流程</strong> 重新演繹一遍，像偵探辦案一樣，一步步把太平房市的資料拼湊完整。</p>
+
+    <h3>1. Extract（提取）－蒐集線索</h3>
+    <ul>
+      <li>資料庫（MySQL、PostgreSQL、Oracle）</li>
+      <li>API</li>
+      <li>CSV、Excel、JSON 等檔案</li>
+      <li>雲端儲存（AWS S3、Google Cloud Storage）</li>
+      <li>日誌系統或感測器資料</li>
+    </ul>
+    <p><strong>我的實際操作：</strong></p>
+    <ul>
+      <li>從 <strong>不動產交易平台</strong> 下載台中市實價登錄 CSV</li>
+      <li>從 <strong>內政部不動產交易時價查詢服務網</strong> 下載 102Q1 至 114Q2 的歷史交易紀錄，超過 50 個檔案</li>
+      <li>在快速瀏覽欄位內容後，進行檔案合併</li>
+    </ul>
+
+    <h3>2. Transform（轉換）－整理拼圖</h3>
+    <p>收集到的原始資料，還無法直接用來分析，就像一箱雜亂的拼圖，需要先分類、清洗，再拼出全貌。</p>
+    <ul>
+      <li>資料型別轉換（數字、日期、布林值）</li>
+      <li>去除重複、補齊缺值</li>
+      <li>格式標準化（例如地址、電話號碼）</li>
+      <li>建立衍生欄位（例如：總價 ÷ 坪數 = 每坪單價）</li>
+    </ul>
+    <p><strong>我的實際操作：</strong></p>
+    <ul>
+      <li>把「成交年月日」改成 YYYY-MM-DD 格式</li>
+      <li>計算每坪價格</li>
+      <li>地址標準化（用程式處理，有些麻煩，但都已克服，主要是為了查詢經緯度）</li>
+      <li>撰寫爬蟲模擬翻頁，抓取在售物件資料(永慶房仲網)</li>
+    </ul>
+
+    <h3>3. Load（載入）－資料進倉</h3>
+    <p>整理好的資料，就像拼好的拼圖，現在可以放進資料倉庫或分析工具，開始進行探索與視覺化。</p>
+    <ul>
+      <li>資料倉儲（BigQuery、Snowflake、Redshift）</li>
+      <li>BI 工具（Power BI、Tableau）</li>
+      <li>傳統資料庫（PostgreSQL、SQL Server）</li>
+    </ul>
+    <p><strong>我的實際操作：</strong></p>
+    <ul>
+      <li>將整理好的資料載入 Power BI</li>
+      <li>依分析目的建立資料行、維度表，並設定關聯</li>
+      <li>這裡有較多的表格建立操作，在售物件與歷史資料不合併處理，主要是為了避免資料混淆。</li>
+      <li>為了關聯這兩的資料表，因此需要建立以下維度資料表，以進行關聯：
+        <ul>
+          <li>行政區(鄉鎮市區)</li>
+          <li>屋齡區間</li>
+          <li>建物型態</li>
+          <li>房價區間</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="content3">三、初步成果與分析期待</h2>
+    <p>我已取得了歷史資料，以及在售資料，這些資料似乎已足以解除我大部分的疑惑：</p>
+    <ul>
+      <li>我能夠比對歷史價格與目前市場價格</li>
+      <li>知道哪些區域的房型、屋齡分布</li>
+      <li>確認房仲網價是否貼近市場行情</li>
+    </ul>
+    <p>接下來，我將利用這些資料在 <strong>Power BI</strong> 中進行分析與視覺化，並透過圖表回答我最初對太平房市的所有問題。</p>
+  </section>
+
+  <section>
+    <h2 id="content4">四、台中市不動產成交趨勢</h2>
+    <img src="./images/p1.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">
+    <h3>1️⃣ 年成交量－建物</h3>
+    <img src="./images/p1-1.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">    
+    <ul>
+      <li>2020 年達高峰，成交件數最高，主要受疫情、低利率影響</li>
+      <li>透天厝與住宅大樓是主要成交類型</li>
+      <li>低利率 + 錢潮寬鬆 + 投資避險需求 推升購屋熱潮</li>
+      <li>2021–2022：房市過熱，政府推出「打炒房」措施（信用管制、禁止換約、房地合一2.0等）</li>
+      <li>2023 起利率上升，買氣趨緩</li>
+    </ul>
+
+    <h3>2️⃣ 年成交量－行政區</h3>
+    <img src="./images/p1-2.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <p>北屯區與太平區成交最熱絡，2020 年達巔峰；其他行政區交易平穩</p>
+
+    <h3>3️⃣ 成交建物型態占比</h3>
+    <img src="./images/p1-3.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <p>住宅大樓約占 67%，透天厝 19%，華廈 14%</p>
+
+    <h3>4️⃣ 年度平均單價趨勢－建物</h3>
+    <img src="./images/p1-4.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <p>單價持續上升，透天厝最高，其次為住宅大樓；華廈價格最低，但漲幅明顯</p>
+
+    <h3>5️⃣ 年度平均單價趨勢－行政區</h3>
+    <img src="./images/p1-5.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <p>北屯價格最高，太平價格較親民但漲勢穩健</p>
+
+    <h3>6️⃣ 成交數統計</h3>
+    <img src="./images/p1-6.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <p>北屯成交最多，太平次之；住宅大樓為主力產品</p>
+    <p>太平區屬於「成交活躍但價格較親民」的區域，是我心中的買房首選。</p>
+  </section>
+
+  <section>
+    <h2 id="content5">五、行政區交易探討-屋齡</h2>
+    <img src="./images/p2.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">    
+    <h3>1️⃣ 年交易量－屋齡</h3>
+    <img src="./images/p2-1.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <ul>
+      <li>0-5 年新屋交易量最高，2020 年最為突出</li>
+      <li>10 年以上老屋交易明顯偏低</li>
+      <li>近兩年新屋交易減少，市場趨向理性</li>
+    </ul>
+
+    <h3>2️⃣ 行政區熱門物件－屋齡</h3>
+    <img src="./images/p2-2.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <p>北屯新屋最熱，太平次之；市中心各區交易量明顯偏低</p>
+
+    <h3>3️⃣ 年度統計洞察</h3>
+    <img src="./images/p2-3.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">        
+    <p>到2025 年新屋仍為主力，老屋佔比不到三成</p>
+    <p>台中房市以「新屋」為主，北屯與太平最活躍</p>
+  </section>
+
+  <section>
+    <h2 id="content6">六、太平區在售物件分析</h2>
+    <img src="./images/p3.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">    
+    <h3>1️⃣ 在售建物型態比例</h3>
+    <img src="./images/p3-1.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">      
+    <p>住宅大樓占比約 44%，透天厝約 37%，華廈與公寓合計不到 20%</p>
+
+    <h3>2️⃣ 平均單價－建物</h3>
+    <img src="./images/p3-2.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">  
+    <ul>
+      <li>透天厝約 0.47 百萬/坪</li>
+      <li>住宅大樓約 0.35 百萬/坪</li>
+      <li>華廈與公寓約 0.27 百萬/坪</li>
+    </ul>
+
+    <h3>3️⃣ 依建坪看物件數</h3>
+    <img src="./images/p3-3.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">  
+    <p>36-50 坪與 51-70 坪產品最多，占比超過 60%</p>
+
+    <h3>4️⃣ 在售平均單價與歷年比較</h3>
+    <img src="./images/p3-4.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">  
+    <p>在售價格高於歷年成交價，顯示有溢價空間；透天厝漲幅最明顯</p>
+
+    <h3>5️⃣ 依總價看物件數</h3>
+    <img src="./images/p3-5.png" alt="" style="max-width: 100%; height: auto; transition: transform 0.3s ease; cursor: zoom-in;" 
+         onclick="toggleZoom()">  
+    <ul>
+      <li>1000-2000 萬物件最多</li>
+      <li>2000 萬以上多為高總價透天</li>
+      <li>500 萬以下物件幾乎絕跡</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="content7">七、我的分析與結論</h2>
+    <ul>
+      <li>相對於過去幾年的價格，現在的房價確實較高，但考量到通貨膨脹及市場需求，仍在合理範圍內。</li>
+      <li>整體來看，總價仍在可接受範圍內，但需依個別物件狀況而定。</li>
+      <li>太平區以住宅大樓與透天厝為主，北屯區則以新屋為主力。</li>
+      <li>目前市場上新房子與老房子都有，但新房子的比例逐漸增加。</li>
+      <li>房仲網的價錢通常是行情價，但實際成交價可能會有議價空間。</li>
+      <li>太平區在售市場以中大型住宅大樓與透天為主，房仲開價略高，有議價空間，幫助我進一步鎖定理想房型與價格帶。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="content8">八、資料來源</h2>
+    <ul>
+      <li><a href="https://lvr.land.moi.gov.tw/" target="_blank">內政部不動產交易實價查詢服務網</a></li>
+      <li><a href="https://buy.yungching.com.tw/" target="_blank">永慶房仲網</a></li>
+    </ul>
+  </section>
+  
+  <section>
+    <h2 id="content9">九、深深的感謝您</h2>
+    <ul>
+      <li>謝謝林叔伶老師的指導與啟蒙，讓我在Python的學習道路上有一種熟悉感的陪伴。</li>
+      <li>謝謝梁國亮老師的教導，讓我在資料分析方面有了更深入的理解與啟發。</li>
+      <li>感謝同學們這段時間的陪伴，共同成長是很難再有的體驗。</li>
+      <li>感謝家人對我的支持與理解，讓我能夠專心投入這個專題。</li>
+      <li>人因夢想而努力，我將再次擁抱這份熱情。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 id="content10">十、專題檔案下載</h2>
+    <p>如果您對我的專題有興趣，歡迎下載以下檔案：</p>
+    <ul>
+      <li><a href="./files/范智軒-專題報告-大台中房市分析-太平篇.pdf" download>📄 點選下載專題檔案</a></li>
+    </ul>
+  </section>
