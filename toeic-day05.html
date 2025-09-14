@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Day 5 — 法律 & 合約 — Flashcards (1–150)</title>
+    <style>
+        :root {
+            --bg: #f0f8f0;
+            --card: #ffffff;
+            --muted: #4a5d43;
+            --accent: #2e4b2e;
+            --shadow: rgba(46, 75, 46, 0.2);
+            --border: #a3c9a3;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
+            margin: 0;
+            background: var(--bg) url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat;
+            /* 木質紋理 */
+            color: var(--accent);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 18px
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-family: 'Georgia', serif;
+            color: var(--accent);
+        }
+
+        p.lead {
+            margin: 6px 0 18px;
+            color: var(--muted)
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            box-shadow: 2px 2px 5px var(--shadow);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .card-area {
+            perspective: 1200px
+        }
+
+        .card {
+            width: 100%;
+            height: 360px;
+            border-radius: 16px;
+            background: var(--card);
+            box-shadow: 0 8px 20px var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 450ms cubic-bezier(.2, .8, .2, 1);
+            border: 2px solid var(--border);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg)
+        }
+
+        .face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 26px;
+            backface-visibility: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        .front {
+            font-weight: 700
+        }
+
+        .front .word {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .front .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+            text-align: center
+        }
+
+        .back .zh {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .back .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .meta {
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .preview {
+            margin-top: 14px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px
+        }
+
+        .chip {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 1px 1px 4px var(--shadow);
+            font-family: 'Georgia', serif;
+        }
+
+        .footer {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        input[type=number] {
+            width: 100px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Georgia', serif;
+        }
+
+        @media (max-width:640px) {
+            .card {
+                height: 260px
+            }
+
+            .front .word {
+                font-size: 34px
+            }
+
+            .back .zh {
+                font-size: 24px
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Day 5 — 法律 & 合約 — Flashcards (1–150)</h1>
+        </header>
+
+        <div class="controls">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button class="btn" id="shuffleBtn">洗牌</button>
+                <button class="btn" id="randomBtn">隨機</button>
+                <button class="btn" id="autoBtn">開始自動</button>
+                <button class="btn" id="exportBtn">匯出當前卡片清單 (CSV)</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="meta" id="counter">卡片 1 / 150</div>
+            </div>
+        </div>
+
+        <div class="card-area">
+            <div class="card" id="card" tabindex="0" aria-label="Flashcard">
+                <div class="face front">
+                    <div class="meta" id="metaFront">No. 1</div>
+                    <div class="word" id="word">office</div>
+                    <button id="speakBtn" class="btn" style="margin-top:8px;padding:4px 8px;font-size:14px;">🔊
+                        發音</button>
+                    <div class="ex" id="ex">She works in a big office in Taipei.</div>
+                </div>
+                <div class="face back">
+                    <div class="meta">&nbsp;</div>
+                    <div class="zh" id="zh">辦公室</div>
+                    <div class="ex" id="zhEx">她在台北的一間大辦公室工作。</div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:12px">
+            <div class="nav">
+                <button class="btn" id="prevBtn">上一張</button>
+                <button class="btn" id="nextBtn">下一張</button>
+                <button class="btn" id="flipBtn">翻面</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px">
+                <label style="font-size:13px;color:var(--muted)">間隔(ms):</label>
+                <input type="number" id="interval" value="4000" min="500" />
+            </div>
+        </div>
+
+        <section class="preview">
+            <h3 style="margin:10px 0 8px">快速預覽（點選跳至該字）</h3>
+            <div class="grid" id="previewGrid"></div>
+        </section>
+
+        <div class="footer">Tip: Space – 翻面 · ← → – 前/後 · 若要列印，請使用瀏覽器列印功能。</div>
+    </div>
+
+    <script>
+        // Full 1–150 vocabulary
+        const VOCAB = [
+            { no: 1, en: 'agreement', zh: '協議', enEx: 'The parties signed an agreement.', zhEx: '雙方簽署了協議。' },
+            { no: 2, en: 'contract', zh: '合約', enEx: 'The contract is legally binding.', zhEx: '合約具有法律約束力。' },
+            { no: 3, en: 'clause', zh: '條款', enEx: 'The contract includes a confidentiality clause.', zhEx: '合約包含保密條款。' },
+            { no: 4, en: 'term', zh: '條件 / 期限', enEx: 'The lease term is one year.', zhEx: '租約期限為一年。' },
+            { no: 5, en: 'condition', zh: '條件', enEx: 'The sale is subject to conditions.', zhEx: '交易受特定條件限制。' },
+            { no: 6, en: 'signature', zh: '簽名', enEx: 'Please provide your signature here.', zhEx: '請在此簽名。' },
+            { no: 7, en: 'attorney', zh: '律師', enEx: 'The attorney advised on legal matters.', zhEx: '律師就法律事宜提供建議。' },
+            { no: 8, en: 'lawyer', zh: '律師', enEx: 'The lawyer reviewed the contract.', zhEx: '律師審查了合約。' },
+            { no: 9, en: 'legal', zh: '法律的', enEx: 'Legal advice is necessary for this case.', zhEx: '這個案件需要法律建議。' },
+            { no: 10, en: 'policy', zh: '政策 / 保險單', enEx: 'The insurance policy covers accidents.', zhEx: '保險單涵蓋意外。' },
+            { no: 11, en: 'regulation', zh: '規定', enEx: 'Compliance with regulations is mandatory.', zhEx: '遵守規定是強制性的。' },
+            { no: 12, en: 'obligation', zh: '義務', enEx: 'Companies have an obligation to pay taxes.', zhEx: '公司有繳稅義務。' },
+            { no: 13, en: 'penalty', zh: '罰則', enEx: 'Violating the rules incurs a penalty.', zhEx: '違反規則會受到處罰。' },
+            { no: 14, en: 'dispute', zh: '爭議', enEx: 'The dispute was resolved through mediation.', zhEx: '爭議通過調解解決。' },
+            { no: 15, en: 'settlement', zh: '和解', enEx: 'The settlement ended the lawsuit.', zhEx: '和解結束了訴訟。' },
+            { no: 16, en: 'liability', zh: '法律責任', enEx: 'The company assumed liability for damages.', zhEx: '公司承擔損害的法律責任。' },
+            { no: 17, en: 'insurance', zh: '保險', enEx: 'The company provides insurance for employees.', zhEx: '公司為員工提供保險。' },
+            { no: 18, en: 'coverage', zh: '保險範圍', enEx: 'The coverage includes theft and fire.', zhEx: '保險範圍涵蓋竊盜和火災。' },
+            { no: 19, en: 'claim', zh: '索賠 / 理賠', enEx: 'The client filed a claim for damages.', zhEx: '客戶提出損害索賠。' },
+            { no: 20, en: 'policyholder', zh: '保單持有人', enEx: 'The policyholder received a refund.', zhEx: '保單持有人獲得退款。' },
+            { no: 21, en: 'renewal', zh: '更新 / 續保', enEx: 'Renewal of the contract is automatic.', zhEx: '合約自動續約。' },
+            { no: 22, en: 'compensation', zh: '賠償', enEx: 'Workers received compensation for injuries.', zhEx: '工人因受傷獲得賠償。' },
+            { no: 23, en: 'risk', zh: '風險', enEx: 'Investment carries a high risk.', zhEx: '投資風險很高。' },
+            { no: 24, en: 'guarantee', zh: '保證', enEx: 'The manufacturer guarantees product quality.', zhEx: '製造商保證產品品質。' },
+            { no: 25, en: 'jurisdiction', zh: '司法管轄權', enEx: 'The case falls under local jurisdiction.', zhEx: '案件屬於當地司法管轄。' },
+            { no: 26, en: 'valid', zh: '有效的', enEx: 'The contract is valid for one year.', zhEx: '合約有效期為一年。' },
+            { no: 27, en: 'invalid', zh: '無效的', enEx: 'The agreement is invalid without a signature.', zhEx: '沒有簽名，協議無效。' },
+            { no: 28, en: 'binding', zh: '有約束力的', enEx: 'The decision is binding on both parties.', zhEx: '決定對雙方具有約束力。' },
+            { no: 29, en: 'enforce', zh: '執行 / 強制實施', enEx: 'Courts enforce contracts strictly.', zhEx: '法院嚴格執行合約。' },
+            { no: 30, en: 'notarize', zh: '公證', enEx: 'The document was notarized by a lawyer.', zhEx: '文件由律師公證。' },
+            { no: 31, en: 'compliance', zh: '遵守 / 合規', enEx: 'Compliance with laws is mandatory.', zhEx: '遵守法律是強制性的。' },
+            { no: 32, en: 'law', zh: '法律', enEx: 'Breaking the law has consequences.', zhEx: '違法會有後果。' },
+            { no: 33, en: 'act', zh: '法案 / 行為', enEx: 'The new act regulates data privacy.', zhEx: '新法案規範資料隱私。' },
+            { no: 34, en: 'statute', zh: '法規 / 成文法', enEx: 'Statutes are enforced by courts.', zhEx: '法規由法院執行。' },
+            { no: 35, en: 'code', zh: '法典 / 規範', enEx: 'The company follows a strict code of ethics.', zhEx: '公司遵守嚴格的道德規範。' },
+            { no: 36, en: 'rule', zh: '規則', enEx: 'Rules must be followed at all times.', zhEx: '規則必須始終遵守。' },
+            { no: 37, en: 'requirement', zh: '要求 / 規定', enEx: 'The job has strict requirements.', zhEx: '這份工作有嚴格要求。' },
+            { no: 38, en: 'permit', zh: '許可證 / 允許', enEx: 'You need a permit to operate.', zhEx: '操作需要許可證。' },
+            { no: 39, en: 'license', zh: '執照', enEx: 'The driver holds a valid license.', zhEx: '駕駛持有有效駕照。' },
+            { no: 40, en: 'authorization', zh: '授權', enEx: 'Authorization is required to access data.', zhEx: '需要授權才能存取資料。' },
+            { no: 41, en: 'approval', zh: '批准', enEx: 'The project requires management approval.', zhEx: '專案需管理層批准。' },
+            { no: 42, en: 'application', zh: '申請 / 應用', enEx: 'Submit your application online.', zhEx: '在線提交你的申請。' },
+            { no: 43, en: 'form', zh: '表格', enEx: 'Fill out the registration form.', zhEx: '填寫註冊表格。' },
+            { no: 44, en: 'document', zh: '文件', enEx: 'Keep important documents safe.', zhEx: '保管重要文件。' },
+            { no: 45, en: 'record', zh: '記錄', enEx: 'Maintain accurate records of transactions.', zhEx: '保存準確的交易記錄。' },
+            { no: 46, en: 'report', zh: '報告', enEx: 'Submit the report by Friday.', zhEx: '星期五前提交報告。' },
+            { no: 47, en: 'memo', zh: '備忘錄', enEx: 'I sent a memo to all staff.', zhEx: '我發送了一份備忘錄給所有員工。' },
+            { no: 48, en: 'notification', zh: '通知', enEx: 'A notification was sent about the hearing.', zhEx: '已發送關於聽證會的通知。' },
+            { no: 49, en: 'notice', zh: '通知 / 告示', enEx: 'Employees received a notice about policy changes.', zhEx: '員工收到政策變更通知。' },
+            { no: 50, en: 'announcement', zh: '公告 / 宣布', enEx: 'The announcement clarified the new rules.', zhEx: '公告澄清了新規則。' },
+            { no: 51, en: 'testimony', zh: '證詞', enEx: 'The witness gave her testimony in court.', zhEx: '證人在法庭上作證。' },
+            { no: 52, en: 'evidence', zh: '證據', enEx: 'The lawyer presented new evidence.', zhEx: '律師提出了新的證據。' },
+            { no: 53, en: 'witness', zh: '證人', enEx: 'The witness identified the suspect.', zhEx: '證人指認了嫌疑人。' },
+            { no: 54, en: 'trial', zh: '審判 / 試驗', enEx: 'The trial lasted three weeks.', zhEx: '審判持續了三週。' },
+            { no: 55, en: 'jury', zh: '陪審團', enEx: 'The jury reached a verdict.', zhEx: '陪審團作出裁決。' },
+            { no: 56, en: 'verdict', zh: '裁決', enEx: 'The verdict was not guilty.', zhEx: '裁決為無罪。' },
+            { no: 57, en: 'sentence', zh: '判決 / 刑期', enEx: 'He received a ten-year sentence.', zhEx: '他被判十年刑期。' },
+            { no: 58, en: 'appeal', zh: '上訴 / 呼籲', enEx: 'The defendant filed an appeal.', zhEx: '被告提出上訴。' },
+            { no: 59, en: 'hearing', zh: '聽證會', enEx: 'A public hearing was scheduled.', zhEx: '安排了一場公開聽證會。' },
+            { no: 60, en: 'case', zh: '案件', enEx: 'The case was closed by the judge.', zhEx: '案件被法官結案。' },
+            { no: 61, en: 'plaintiff', zh: '原告', enEx: 'The plaintiff demanded compensation.', zhEx: '原告要求賠償。' },
+            { no: 62, en: 'defendant', zh: '被告', enEx: 'The defendant denied all charges.', zhEx: '被告否認所有指控。' },
+            { no: 63, en: 'prosecutor', zh: '檢察官', enEx: 'The prosecutor questioned the witness.', zhEx: '檢察官詢問證人。' },
+            { no: 64, en: 'judge', zh: '法官 / 判斷', enEx: 'The judge ruled in favor of the plaintiff.', zhEx: '法官裁定原告勝訴。' },
+            { no: 65, en: 'court', zh: '法院', enEx: 'The trial took place in the district court.', zhEx: '審判在地方法院舉行。' },
+            { no: 66, en: 'justice', zh: '正義 / 法官', enEx: 'Justice must be served.', zhEx: '正義必須得到伸張。' },
+            { no: 67, en: 'crime', zh: '犯罪', enEx: 'The crime rate has decreased.', zhEx: '犯罪率已下降。' },
+            { no: 68, en: 'offense', zh: '罪行 / 違反', enEx: 'Speeding is a minor offense.', zhEx: '超速是輕罪。' },
+            { no: 69, en: 'violation', zh: '違規 / 違反', enEx: 'The company committed a safety violation.', zhEx: '公司違反了安全規定。' },
+            { no: 70, en: 'fraud', zh: '詐欺', enEx: 'He was arrested for fraud.', zhEx: '他因詐欺被捕。' },
+            { no: 71, en: 'theft', zh: '偷竊', enEx: 'Theft is punishable by law.', zhEx: '偷竊依法處罰。' },
+            { no: 72, en: 'robbery', zh: '搶劫', enEx: 'The robbery happened at night.', zhEx: '搶劫發生在晚上。' },
+            { no: 73, en: 'burglary', zh: '入室盜竊', enEx: 'Burglary is a serious crime.', zhEx: '入室盜竊是嚴重罪行。' },
+            { no: 74, en: 'homicide', zh: '殺人', enEx: 'He was convicted of homicide.', zhEx: '他被判殺人罪。' },
+            { no: 75, en: 'murder', zh: '謀殺', enEx: 'The murder shocked the town.', zhEx: '這起謀殺震驚了小鎮。' },
+            { no: 76, en: 'assault', zh: '攻擊 / 襲擊', enEx: 'He was charged with assault.', zhEx: '他被控告攻擊罪。' },
+            { no: 77, en: 'arrest', zh: '逮捕', enEx: 'The police arrested the suspect.', zhEx: '警方逮捕了嫌疑人。' },
+            { no: 78, en: 'charge', zh: '指控 / 收費', enEx: 'He faced a charge of theft.', zhEx: '他面臨偷竊指控。' },
+            { no: 79, en: 'bail', zh: '保釋金', enEx: 'He was released on bail.', zhEx: '他交保獲釋。' },
+            { no: 80, en: 'custody', zh: '拘留 / 監護權', enEx: 'The suspect is in police custody.', zhEx: '嫌疑人被警方拘留。' },
+            { no: 81, en: 'imprisonment', zh: '監禁', enEx: 'The sentence included five years of imprisonment.', zhEx: '判決包含五年監禁。' },
+            { no: 82, en: 'parole', zh: '假釋', enEx: 'He was released on parole.', zhEx: '他獲得假釋。' },
+            { no: 83, en: 'probation', zh: '緩刑 / 試用期', enEx: 'The court granted probation.', zhEx: '法院准予緩刑。' },
+            { no: 84, en: 'fine', zh: '罰金 / 優良的', enEx: 'He paid a fine for speeding.', zhEx: '他因超速繳納罰金。' },
+            { no: 85, en: 'lawsuit', zh: '訴訟', enEx: 'The company faced a lawsuit.', zhEx: '公司面臨訴訟。' },
+            { no: 86, en: 'litigation', zh: '訴訟程序', enEx: 'The dispute went into litigation.', zhEx: '爭議進入訴訟程序。' },
+            { no: 87, en: 'arbitration', zh: '仲裁', enEx: 'The contract requires arbitration.', zhEx: '合約要求仲裁。' },
+            { no: 88, en: 'mediation', zh: '調解', enEx: 'Mediation resolved the conflict.', zhEx: '調解解決了衝突。' },
+            { no: 89, en: 'negotiation', zh: '談判', enEx: 'Negotiation is essential for agreements.', zhEx: '協議需要談判。' },
+            { no: 90, en: 'compromise', zh: '妥協', enEx: 'They reached a compromise.', zhEx: '他們達成了妥協。' },
+            { no: 91, en: 'consent', zh: '同意', enEx: 'Parental consent is required.', zhEx: '需要父母同意。' },
+            { no: 92, en: 'mutual', zh: '互相的', enEx: 'They have mutual respect.', zhEx: '他們互相尊重。' },
+            { no: 93, en: 'obey', zh: '遵守 / 服從', enEx: 'Employees must obey the rules.', zhEx: '員工必須遵守規則。' },
+            { no: 94, en: 'violate', zh: '違反 / 侵犯', enEx: 'He violated the contract terms.', zhEx: '他違反了合約條款。' },
+            { no: 95, en: 'restrict', zh: '限制', enEx: 'The law restricts smoking indoors.', zhEx: '法律限制室內吸菸。' },
+            { no: 96, en: 'prohibit', zh: '禁止', enEx: 'The law prohibits drunk driving.', zhEx: '法律禁止酒駕。' },
+            { no: 97, en: 'ban', zh: '禁止 / 禁令', enEx: 'The city imposed a smoking ban.', zhEx: '城市實施禁菸令。' },
+            { no: 98, en: 'allow', zh: '允許', enEx: 'The contract allows early termination.', zhEx: '合約允許提前終止。' },
+            { no: 99, en: 'permit', zh: '允許 / 許可證', enEx: 'The school permits late entry.', zhEx: '學校允許遲到入場。' },
+            { no: 100, en: 'authorize', zh: '授權', enEx: 'The manager authorized the payment.', zhEx: '經理授權付款。' },
+            { no: 101, en: 'approve', zh: '批准', enEx: 'The board approved the new policy.', zhEx: '董事會批准了新政策。' },
+            { no: 102, en: 'reject', zh: '拒絕', enEx: 'The company rejected the proposal.', zhEx: '公司拒絕了提案。' },
+            { no: 103, en: 'accept', zh: '接受', enEx: 'She accepted the terms of the contract.', zhEx: '她接受了合約條款。' },
+            { no: 104, en: 'enforce', zh: '執行', enEx: 'The police enforce the law.', zhEx: '警方執行法律。' },
+            { no: 105, en: 'implement', zh: '實施 / 工具', enEx: 'The company implemented new rules.', zhEx: '公司實施了新規則。' },
+            { no: 106, en: 'comply', zh: '遵守', enEx: 'Employees must comply with safety regulations.', zhEx: '員工必須遵守安全規定。' },
+            { no: 107, en: 'conform', zh: '符合 / 遵從', enEx: 'The design conforms to the standards.', zhEx: '設計符合標準。' },
+            { no: 108, en: 'abide', zh: '遵守 / 忍受', enEx: 'You must abide by the law.', zhEx: '你必須遵守法律。' },
+            { no: 109, en: 'bind', zh: '約束 / 綁', enEx: 'The contract binds both parties.', zhEx: '合約約束雙方。' },
+            { no: 110, en: 'oblige', zh: '使有義務', enEx: 'The law obliges companies to pay taxes.', zhEx: '法律使公司有繳稅義務。' },
+            { no: 111, en: 'warrant', zh: '保證 / 搜索令', enEx: 'The police obtained a search warrant.', zhEx: '警方取得了搜索令。' },
+            { no: 112, en: 'license', zh: '執照 / 許可', enEx: 'You need a license to practice law.', zhEx: '從事法律工作需要執照。' },
+            { no: 113, en: 'certificate', zh: '證書', enEx: 'She received a teaching certificate.', zhEx: '她獲得了教師證書。' },
+            { no: 114, en: 'document', zh: '文件', enEx: 'All documents must be signed.', zhEx: '所有文件必須簽署。' },
+            { no: 115, en: 'record', zh: '記錄', enEx: 'The lawyer kept a record of the case.', zhEx: '律師保留了案件記錄。' },
+            { no: 116, en: 'file', zh: '歸檔 / 檔案', enEx: 'She filed a complaint.', zhEx: '她提交了投訴。' },
+            { no: 117, en: 'register', zh: '登記', enEx: 'The company registered a trademark.', zhEx: '公司註冊了一個商標。' },
+            { no: 118, en: 'apply', zh: '申請 / 應用', enEx: 'He applied for a visa.', zhEx: '他申請了簽證。' },
+            { no: 119, en: 'petition', zh: '請願 / 請求', enEx: 'Citizens signed a petition for change.', zhEx: '市民簽署了改革請願書。' },
+            { no: 120, en: 'appeal', zh: '上訴 / 吸引', enEx: 'They appealed to the higher court.', zhEx: '他們向高等法院上訴。' },
+            { no: 121, en: 'claimant', zh: '索賠人', enEx: 'The claimant requested compensation.', zhEx: '索賠人要求賠償。' },
+            { no: 122, en: 'beneficiary', zh: '受益人', enEx: 'She is the beneficiary of the insurance policy.', zhEx: '她是保險單的受益人。' },
+            { no: 123, en: 'heir', zh: '繼承人', enEx: 'The heir inherited the property.', zhEx: '繼承人繼承了財產。' },
+            { no: 124, en: 'successor', zh: '繼任者', enEx: 'The successor took over the position.', zhEx: '繼任者接管了職位。' },
+            { no: 125, en: 'assign', zh: '分配 / 指派', enEx: 'The manager assigned tasks to employees.', zhEx: '經理分配任務給員工。' },
+            { no: 126, en: 'delegate', zh: '委派 / 代表', enEx: 'He delegated responsibility to his assistant.', zhEx: '他把責任交給助理。' },
+            { no: 127, en: 'appoint', zh: '任命', enEx: 'She was appointed as the new director.', zhEx: '她被任命為新主管。' },
+            { no: 128, en: 'nominate', zh: '提名', enEx: 'He was nominated for the award.', zhEx: '他被提名獲得獎項。' },
+            { no: 129, en: 'elect', zh: '選舉 / 推選', enEx: 'The people elected a new president.', zhEx: '人民選舉了一位新總統。' },
+            { no: 130, en: 'vote', zh: '投票', enEx: 'Citizens voted in the election.', zhEx: '市民在選舉中投票。' },
+            { no: 131, en: 'ballot', zh: '選票', enEx: 'They cast their ballots secretly.', zhEx: '他們秘密投下選票。' },
+            { no: 132, en: 'referendum', zh: '公投', enEx: 'The country held a referendum on independence.', zhEx: '該國舉行了獨立公投。' },
+            { no: 133, en: 'constitution', zh: '憲法', enEx: 'The constitution guarantees freedom of speech.', zhEx: '憲法保障言論自由。' },
+            { no: 134, en: 'amendment', zh: '修正案', enEx: 'The amendment was passed by parliament.', zhEx: '修正案獲得國會通過。' },
+            { no: 135, en: 'statute', zh: '法令 / 法規', enEx: 'The statute prohibits discrimination.', zhEx: '法令禁止歧視。' },
+            { no: 136, en: 'act', zh: '法案 / 行為', enEx: 'The parliament passed a new act.', zhEx: '國會通過了一項新法案。' },
+            { no: 137, en: 'bill', zh: '法案 / 帳單', enEx: 'The bill was debated in congress.', zhEx: '國會辯論該法案。' },
+            { no: 138, en: 'ordinance', zh: '條例', enEx: 'The city passed a new ordinance.', zhEx: '城市通過了一項新條例。' },
+            { no: 139, en: 'decree', zh: '法令 / 命令', enEx: 'The king issued a decree.', zhEx: '國王頒布了一道法令。' },
+            { no: 140, en: 'charter', zh: '憲章 / 特許狀', enEx: 'The UN Charter promotes peace.', zhEx: '聯合國憲章促進和平。' },
+            { no: 141, en: 'treaty', zh: '條約', enEx: 'The countries signed a peace treaty.', zhEx: '各國簽署了和平條約。' },
+            { no: 142, en: 'alliance', zh: '同盟', enEx: 'The two nations formed an alliance.', zhEx: '兩國結成同盟。' },
+            { no: 143, en: 'union', zh: '聯盟 / 工會', enEx: 'Workers formed a union.', zhEx: '工人組成了工會。' },
+            { no: 144, en: 'federation', zh: '聯邦 / 聯合會', enEx: 'The states formed a federation.', zhEx: '各州組成了聯邦。' },
+            { no: 145, en: 'confederation', zh: '邦聯', enEx: 'The confederation united small states.', zhEx: '邦聯團結了小國。' },
+            { no: 146, en: 'organization', zh: '組織', enEx: 'The organization promotes human rights.', zhEx: '該組織推動人權。' },
+            { no: 147, en: 'institution', zh: '機構 / 制度', enEx: 'The institution was founded in 1900.', zhEx: '該機構成立於 1900 年。' },
+            { no: 148, en: 'committee', zh: '委員會', enEx: 'The committee discussed the proposal.', zhEx: '委員會討論了提案。' },
+            { no: 149, en: 'board', zh: '董事會 / 板子', enEx: 'The board approved the budget.', zhEx: '董事會批准了預算。' },
+            { no: 150, en: 'director', zh: '董事 / 主管', enEx: 'The director approved the legal agreement.', zhEx: '董事批准了法律協議。' },
+        ];
+
+        // Utilities
+        function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[b[i], b[j]] = [b[j], b[i]] } return b }
+
+        // State
+        let deck = shuffle(VOCAB.slice());
+        let idx = 0;
+        let flipped = false;
+        let autoplay = false;
+        let timer = null;
+
+        // Elements
+        const cardEl = document.getElementById('card');
+        const wordEl = document.getElementById('word');
+        const exEl = document.getElementById('ex');
+        const zhEl = document.getElementById('zh');
+        const zhExEl = document.getElementById('zhEx');
+        const metaFront = document.getElementById('metaFront');
+        const counter = document.getElementById('counter');
+        const previewGrid = document.getElementById('previewGrid');
+        const intervalInput = document.getElementById('interval');
+        const autoBtn = document.getElementById('autoBtn');
+        const exportBtn = document.getElementById('exportBtn');
+
+        function render() {
+            const c = deck[idx];
+            wordEl.textContent = c.en;
+            exEl.textContent = c.enEx;
+            zhEl.textContent = c.zh;
+            zhExEl.textContent = c.zhEx;
+            metaFront.textContent = 'No. ' + c.no;
+            counter.textContent = `卡片 ${idx + 1} / ${deck.length}`;
+            cardEl.classList.toggle('flipped', flipped);
+
+            // speakWord(c.en);            
+        }
+
+        function nextCard() { idx = (idx + 1) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function prevCard() { idx = (idx - 1 + deck.length) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function randomCard() { idx = Math.floor(Math.random() * deck.length); flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function reshuffle() { deck = shuffle(deck); idx = 0; flipped = false; render(); buildPreview(); }
+
+        function startAuto() { autoplay = true; autoBtn.textContent = '停止自動'; timer = setInterval(() => { nextCard(); }, Math.max(500, Number(intervalInput.value) || 2000)); }
+        function stopAuto() { autoplay = false; autoBtn.textContent = '開始自動'; clearInterval(timer); timer = null; }
+        function toggleAuto() { if (autoplay) stopAuto(); else startAuto(); }
+
+        // Events
+        document.getElementById('shuffleBtn').addEventListener('click', () => { reshuffle(); });
+        document.getElementById('randomBtn').addEventListener('click', () => { randomCard(); });
+        document.getElementById('nextBtn').addEventListener('click', () => { nextCard(); });
+        document.getElementById('prevBtn').addEventListener('click', () => { prevCard(); });
+        document.getElementById('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
+        autoBtn.addEventListener('click', () => { toggleAuto(); });
+        exportBtn.addEventListener('click', () => { exportCSV(); });
+
+        cardEl.addEventListener('click', () => { flipped = !flipped; render(); });
+        cardEl.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+        });
+
+        intervalInput.addEventListener('change', () => { if (autoplay) { stopAuto(); startAuto(); } });
+
+        // Build preview grid
+        function buildPreview() {
+            previewGrid.innerHTML = ''; deck.forEach((d, i) => {
+                const btn = document.createElement('button'); btn.className = 'chip'; btn.textContent = d.no + '. ' + d.en; btn.addEventListener('click', () => { idx = i; flipped = false; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }); previewGrid.appendChild(btn);
+            })
+        }
+
+        // Export current deck to CSV
+        function exportCSV() {
+            const rows = [['No', 'Vocabulary', 'Chinese', 'Example (EN)', '例句 (中)']];
+            deck.forEach(d => rows.push([d.no, d.en, d.zh, d.enEx, d.zhEx]));
+            const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'Day1_Flashcards_1-150.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        }
+
+        // Init
+        render(); buildPreview();
+
+        // Global keyboard navigation when card not focused
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement === cardEl) return;
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+        });
+
+        const speakBtn = document.getElementById('speakBtn');
+
+        function speakWord(word) {
+            if (!window.speechSynthesis) return;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US'; // 英文發音
+            window.speechSynthesis.cancel(); // 先停止前一個發音
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 點擊按鈕發音
+
+        speakBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
+            speakWord(deck[idx].en);
+        });
+
+    </script>
+
+</body>
+
+</html>

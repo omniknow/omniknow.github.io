@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Day 4 — 產品 & 客服 — Flashcards (1–150)</title>
+    <style>
+        :root {
+            --bg: #f0f8f0;
+            --card: #ffffff;
+            --muted: #4a5d43;
+            --accent: #2e4b2e;
+            --shadow: rgba(46, 75, 46, 0.2);
+            --border: #a3c9a3;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
+            margin: 0;
+            background: var(--bg) url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat;
+            /* 木質紋理 */
+            color: var(--accent);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 18px
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-family: 'Georgia', serif;
+            color: var(--accent);
+        }
+
+        p.lead {
+            margin: 6px 0 18px;
+            color: var(--muted)
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            box-shadow: 2px 2px 5px var(--shadow);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .card-area {
+            perspective: 1200px
+        }
+
+        .card {
+            width: 100%;
+            height: 360px;
+            border-radius: 16px;
+            background: var(--card);
+            box-shadow: 0 8px 20px var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 450ms cubic-bezier(.2, .8, .2, 1);
+            border: 2px solid var(--border);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg)
+        }
+
+        .face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 26px;
+            backface-visibility: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        .front {
+            font-weight: 700
+        }
+
+        .front .word {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .front .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+            text-align: center
+        }
+
+        .back .zh {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .back .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .meta {
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .preview {
+            margin-top: 14px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px
+        }
+
+        .chip {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 1px 1px 4px var(--shadow);
+            font-family: 'Georgia', serif;
+        }
+
+        .footer {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        input[type=number] {
+            width: 100px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Georgia', serif;
+        }
+
+        @media (max-width:640px) {
+            .card {
+                height: 260px
+            }
+
+            .front .word {
+                font-size: 34px
+            }
+
+            .back .zh {
+                font-size: 24px
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Day 4 — 產品 & 客服 — Flashcards (1–150)</h1>
+        </header>
+
+        <div class="controls">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button class="btn" id="shuffleBtn">洗牌</button>
+                <button class="btn" id="randomBtn">隨機</button>
+                <button class="btn" id="autoBtn">開始自動</button>
+                <button class="btn" id="exportBtn">匯出當前卡片清單 (CSV)</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="meta" id="counter">卡片 1 / 150</div>
+            </div>
+        </div>
+
+        <div class="card-area">
+            <div class="card" id="card" tabindex="0" aria-label="Flashcard">
+                <div class="face front">
+                    <div class="meta" id="metaFront">No. 1</div>
+                    <div class="word" id="word">office</div>
+                    <button id="speakBtn" class="btn" style="margin-top:8px;padding:4px 8px;font-size:14px;">🔊
+                        發音</button>
+                    <div class="ex" id="ex">She works in a big office in Taipei.</div>
+                </div>
+                <div class="face back">
+                    <div class="meta">&nbsp;</div>
+                    <div class="zh" id="zh">辦公室</div>
+                    <div class="ex" id="zhEx">她在台北的一間大辦公室工作。</div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:12px">
+            <div class="nav">
+                <button class="btn" id="prevBtn">上一張</button>
+                <button class="btn" id="nextBtn">下一張</button>
+                <button class="btn" id="flipBtn">翻面</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px">
+                <label style="font-size:13px;color:var(--muted)">間隔(ms):</label>
+                <input type="number" id="interval" value="4000" min="500" />
+            </div>
+        </div>
+
+        <section class="preview">
+            <h3 style="margin:10px 0 8px">快速預覽（點選跳至該字）</h3>
+            <div class="grid" id="previewGrid"></div>
+        </section>
+
+        <div class="footer">Tip: Space – 翻面 · ← → – 前/後 · 若要列印，請使用瀏覽器列印功能。</div>
+    </div>
+
+    <script>
+        // Full 1–150 vocabulary
+        const VOCAB = [
+            { no: 1, en: 'product', zh: '產品', enEx: 'The new product is very popular.', zhEx: '新產品非常受歡迎。' },
+            { no: 2, en: 'feature', zh: '特徵 / 功能', enEx: 'This phone has many features.', zhEx: '這款手機有許多功能。' },
+            { no: 3, en: 'specification', zh: '規格', enEx: 'Check the product specifications before purchase.', zhEx: '購買前請確認產品規格。' },
+            { no: 4, en: 'function', zh: '功能', enEx: 'The function of this device is easy to use.', zhEx: '這個裝置的功能容易操作。' },
+            { no: 5, en: 'warranty', zh: '保固', enEx: 'The product comes with a two-year warranty.', zhEx: '產品附帶兩年保固。' },
+            { no: 6, en: 'guarantee', zh: '保證', enEx: 'The company guarantees customer satisfaction.', zhEx: '公司保證顧客滿意。' },
+            { no: 7, en: 'defect', zh: '瑕疵 / 缺陷', enEx: 'The product was returned due to a defect.', zhEx: '產品因瑕疵被退回。' },
+            { no: 8, en: 'repair', zh: '修理', enEx: 'The company repaired the broken device.', zhEx: '公司修理了壞掉的裝置。' },
+            { no: 9, en: 'replacement', zh: '替換', enEx: 'We provide free replacement for damaged goods.', zhEx: '我們提供損壞產品免費替換。' },
+            { no: 10, en: 'service', zh: '服務', enEx: 'Customer service is available 24/7.', zhEx: '客服全天候提供服務。' },
+            { no: 11, en: 'hotline', zh: '熱線', enEx: 'Call the hotline for assistance.', zhEx: '致電客服熱線尋求協助。' },
+            { no: 12, en: 'inquiry', zh: '詢問 / 問題', enEx: 'We received an inquiry about the product.', zhEx: '我們收到關於產品的詢問。' },
+            { no: 13, en: 'complaint', zh: '投訴', enEx: 'The customer filed a complaint.', zhEx: '顧客提出了一項投訴。' },
+            { no: 14, en: 'refund', zh: '退款', enEx: 'A full refund was issued for the defective item.', zhEx: '對有缺陷的商品全額退款。' },
+            { no: 15, en: 'exchange', zh: '換貨', enEx: 'The store allows product exchange within 7 days.', zhEx: '商店允許七天內換貨。' },
+            { no: 16, en: 'satisfaction', zh: '滿意度', enEx: 'Customer satisfaction is our priority.', zhEx: '顧客滿意度是我們的首要任務。' },
+            { no: 17, en: 'quality', zh: '品質', enEx: 'The product quality is excellent.', zhEx: '產品品質優良。' },
+            { no: 18, en: 'durable', zh: '耐用的', enEx: 'This material is very durable.', zhEx: '這種材料非常耐用。' },
+            { no: 19, en: 'reliable', zh: '可靠的', enEx: 'He is a reliable employee.', zhEx: '他是一名可靠的員工。' },
+            { no: 20, en: 'efficient', zh: '高效率的', enEx: 'The new system is more efficient.', zhEx: '新系統效率更高。' },
+            { no: 21, en: 'convenient', zh: '方便的', enEx: 'Online shopping is convenient.', zhEx: '網購很方便。' },
+            { no: 22, en: 'instruction', zh: '說明 / 指示', enEx: 'Follow the instructions carefully.', zhEx: '仔細遵循說明。' },
+            { no: 23, en: 'manual', zh: '手冊', enEx: 'The manual explains how to operate the device.', zhEx: '手冊說明如何操作裝置。' },
+            { no: 24, en: 'demonstration', zh: '示範', enEx: 'The salesman gave a product demonstration.', zhEx: '業務員進行了產品示範。' },
+            { no: 25, en: 'shipment', zh: '出貨', enEx: 'The shipment will arrive tomorrow.', zhEx: '出貨將於明天到達。' },
+            { no: 26, en: 'delivery', zh: '運送 / 配送', enEx: 'Delivery takes 3–5 business days.', zhEx: '運送需 3–5 個工作天。' },
+            { no: 27, en: 'tracking', zh: '追蹤', enEx: 'You can track your package online.', zhEx: '你可以在線追蹤包裹。' },
+            { no: 28, en: 'supplier', zh: '供應商', enEx: 'The supplier delivers high-quality materials.', zhEx: '供應商提供高品質材料。' },
+            { no: 29, en: 'vendor', zh: '廠商 / 賣方', enEx: 'We ordered the parts from a reliable vendor.', zhEx: '我們從可靠廠商訂購零件。' },
+            { no: 30, en: 'retailer', zh: '零售商', enEx: 'The retailer offers a variety of products.', zhEx: '零售商提供多種產品。' },
+            { no: 31, en: 'wholesale', zh: '批發', enEx: 'The company sells goods at wholesale prices.', zhEx: '公司以批發價銷售商品。' },
+            { no: 32, en: 'manufacture', zh: '製造', enEx: 'The company manufactures electronic devices.', zhEx: '公司製造電子產品。' },
+            { no: 33, en: 'factory', zh: '工廠', enEx: 'The factory produces 1,000 units per day.', zhEx: '工廠每天生產 1,000 件。' },
+            { no: 34, en: 'assembly', zh: '組裝', enEx: 'The assembly of the product is automated.', zhEx: '產品組裝自動化完成。' },
+            { no: 35, en: 'production', zh: '生產', enEx: 'Production increased by 20% this month.', zhEx: '本月生產增加 20%。' },
+            { no: 36, en: 'quality control', zh: '品管 / 品質控制', enEx: 'Quality control ensures product consistency.', zhEx: '品管確保產品一致性。' },
+            { no: 37, en: 'inspection', zh: '檢查 / 檢驗', enEx: 'Inspection is done before shipment.', zhEx: '出貨前進行檢驗。' },
+            { no: 38, en: 'machinery', zh: '機械設備', enEx: 'The factory invested in new machinery.', zhEx: '工廠投資新機械設備。' },
+            { no: 39, en: 'equipment', zh: '設備', enEx: 'Equipment must be maintained regularly.', zhEx: '設備必須定期維護。' },
+            { no: 40, en: 'automation', zh: '自動化', enEx: 'Automation improves production efficiency.', zhEx: '自動化提升生產效率。' },
+            { no: 41, en: 'packaging', zh: '包裝', enEx: 'Packaging protects the products during transport.', zhEx: '包裝在運輸中保護產品。' },
+            { no: 42, en: 'container', zh: '容器 / 貨櫃', enEx: 'Goods are shipped in large containers.', zhEx: '商品以大型貨櫃運送。' },
+            { no: 43, en: 'order', zh: '訂單', enEx: 'The customer placed an order online.', zhEx: '顧客在線下訂單。' },
+            { no: 44, en: 'stock', zh: '庫存', enEx: 'Check the stock before placing an order.', zhEx: '下單前檢查庫存。' },
+            { no: 45, en: 'inventory', zh: '存貨', enEx: 'Inventory must be updated daily.', zhEx: '存貨必須每日更新。' },
+            { no: 46, en: 'shipment', zh: '裝運', enEx: 'The shipment was delayed due to weather.', zhEx: '出貨因天氣延遲。' },
+            { no: 47, en: 'cargo', zh: '貨物 / 貨運', enEx: 'The cargo arrived safely at the port.', zhEx: '貨物安全抵達港口。' },
+            { no: 48, en: 'freight', zh: '貨運 / 運費', enEx: 'Freight costs have increased.', zhEx: '運費上漲了。' },
+            { no: 49, en: 'transport', zh: '運輸', enEx: 'Goods are transported by truck.', zhEx: '商品以卡車運輸。' },
+            { no: 50, en: 'logistics', zh: '物流', enEx: 'Logistics management ensures timely delivery.', zhEx: '物流管理確保及時交貨。' },
+            { no: 51, en: 'schedule', zh: '時間表 / 排程', enEx: 'The project schedule is tight.', zhEx: '專案時間表很緊湊。' },
+            { no: 52, en: 'timetable', zh: '時刻表', enEx: 'Check the train timetable before leaving.', zhEx: '出發前查看火車時刻表。' },
+            { no: 53, en: 'route', zh: '路線', enEx: 'The delivery route is optimized.', zhEx: '配送路線已優化。' },
+            { no: 54, en: 'plan', zh: '計畫', enEx: 'We have a detailed plan for the project.', zhEx: '我們有詳細的專案計畫。' },
+            { no: 55, en: 'project', zh: '專案', enEx: 'The team started a new project.', zhEx: '團隊開始了一個新專案。' },
+            { no: 56, en: 'team', zh: '團隊', enEx: 'The team works efficiently.', zhEx: '團隊工作高效。' },
+            { no: 57, en: 'leader', zh: '領導者', enEx: 'The team leader assigned tasks.', zhEx: '團隊領導分配了任務。' },
+            { no: 58, en: 'member', zh: '成員', enEx: 'Each member contributed ideas.', zhEx: '每位成員都提供了想法。' },
+            { no: 59, en: 'staff', zh: '員工', enEx: 'Staff are required to attend training.', zhEx: '員工需參加培訓。' },
+            { no: 60, en: 'employee', zh: '員工', enEx: 'Employees must follow company policies.', zhEx: '員工必須遵守公司政策。' },
+            { no: 61, en: 'manager', zh: '經理', enEx: 'The manager approved the budget.', zhEx: '經理批准了預算。' },
+            { no: 62, en: 'supervisor', zh: '主管', enEx: 'The supervisor monitored the workflow.', zhEx: '主管監控工作流程。' },
+            { no: 63, en: 'department', zh: '部門', enEx: 'The customer service department handles inquiries.', zhEx: '客服部門處理詢問。' },
+            { no: 64, en: 'division', zh: '分部 / 部門', enEx: 'The production division increased output.', zhEx: '生產部門增加產量。' },
+            { no: 65, en: 'branch', zh: '分支 / 分部', enEx: 'The company has branches nationwide.', zhEx: '公司在全國有分支機構。' },
+            { no: 66, en: 'office', zh: '辦公室', enEx: 'The new office is fully equipped.', zhEx: '新辦公室設備齊全。' },
+            { no: 67, en: 'company', zh: '公司', enEx: 'The company expanded its operations.', zhEx: '公司擴展業務。' },
+            { no: 68, en: 'organization', zh: '組織', enEx: 'The organization supports social initiatives.', zhEx: '該組織支持社會公益。' },
+            { no: 69, en: 'enterprise', zh: '企業', enEx: 'The enterprise invested in advanced machinery.', zhEx: '該企業投資於先進機械。' },
+            { no: 70, en: 'contract', zh: '合約', enEx: 'The contract was signed yesterday.', zhEx: '合約昨天簽署了。' },
+            { no: 71, en: 'agreement', zh: '協議', enEx: 'The two parties reached an agreement.', zhEx: '雙方達成協議。' },
+            { no: 72, en: 'clause', zh: '條款', enEx: 'The contract includes a confidentiality clause.', zhEx: '合約包含保密條款。' },
+            { no: 73, en: 'term', zh: '期限 / 條件', enEx: 'The lease term is one year.', zhEx: '租約期限為一年。' },
+            { no: 74, en: 'condition', zh: '條件', enEx: 'The sale is subject to conditions.', zhEx: '交易受特定條件限制。' },
+            { no: 75, en: 'signature', zh: '簽名', enEx: 'Please provide your signature here.', zhEx: '請在此簽名。' },
+            { no: 76, en: 'document', zh: '文件', enEx: 'Keep all important documents safe.', zhEx: '保存所有重要文件。' },
+            { no: 77, en: 'form', zh: '表格', enEx: 'Fill out the application form.', zhEx: '填寫申請表格。' },
+            { no: 78, en: 'policy', zh: '政策 / 條款', enEx: 'The company has a strict policy on refunds.', zhEx: '公司對退款有嚴格政策。' },
+            { no: 79, en: 'regulation', zh: '規定', enEx: 'Tax regulations are strict.', zhEx: '稅務規定很嚴格。' },
+            { no: 80, en: 'procedure', zh: '程序', enEx: 'Follow the procedure carefully.', zhEx: '仔細遵循程序。' },
+            { no: 81, en: 'guideline', zh: '指南', enEx: 'Guidelines help standardize processes.', zhEx: '指南有助於流程標準化。' },
+            { no: 82, en: 'instruction', zh: '指示 / 說明', enEx: 'Follow the instructions step by step.', zhEx: '一步一步遵循說明。' },
+            { no: 83, en: 'announcement', zh: '公告', enEx: 'The company made an important announcement.', zhEx: '公司發布重要公告。' },
+            { no: 84, en: 'notice', zh: '通知', enEx: 'Employees received a notice about the meeting.', zhEx: '員工收到會議通知。' },
+            { no: 85, en: 'memo', zh: '備忘錄', enEx: 'I sent a memo to all staff.', zhEx: '我發送了備忘錄給所有員工。' },
+            { no: 86, en: 'report', zh: '報告', enEx: 'The report was submitted on time.', zhEx: '報告按時提交。' },
+            { no: 87, en: 'summary', zh: '摘要', enEx: 'Read the executive summary carefully.', zhEx: '仔細閱讀執行摘要。' },
+            { no: 88, en: 'chart', zh: '圖表', enEx: 'The chart shows sales growth.', zhEx: '圖表顯示銷售增長。' },
+            { no: 89, en: 'graph', zh: '圖表', enEx: 'The graph illustrates market trends.', zhEx: '圖表說明市場趨勢。' },
+            { no: 90, en: 'figure', zh: '數字 / 圖表', enEx: 'The figures indicate profit increase.', zhEx: '數字顯示利潤增加。' },
+            { no: 91, en: 'statistic', zh: '統計數據', enEx: 'Statistics show customer satisfaction.', zhEx: '統計顯示顧客滿意度。' },
+            { no: 92, en: 'analysis', zh: '分析', enEx: 'Market analysis is essential.', zhEx: '市場分析很重要。' },
+            { no: 93, en: 'trend', zh: '趨勢', enEx: 'The trend shows growth in demand.', zhEx: '趨勢顯示需求增長。' },
+            { no: 94, en: 'forecast', zh: '預測', enEx: 'Sales forecast predicts higher revenue.', zhEx: '銷售預測顯示收入增加。' },
+            { no: 95, en: 'estimate', zh: '估計', enEx: 'The project estimate was accurate.', zhEx: '專案估算準確。' },
+            { no: 96, en: 'result', zh: '結果', enEx: 'The campaign results were impressive.', zhEx: '活動結果令人印象深刻。' },
+            { no: 97, en: 'outcome', zh: '結果', enEx: 'The outcome of the negotiation was positive.', zhEx: '談判結果正面。' },
+            { no: 98, en: 'solution', zh: '解決方案', enEx: 'We found a solution to the issue.', zhEx: '我們找到問題的解決方案。' },
+            { no: 99, en: 'problem', zh: '問題', enEx: 'The main problem is low efficiency.', zhEx: '主要問題是效率低。' },
+            { no: 100, en: 'issue', zh: '議題 / 問題', enEx: 'Customer complaints are a serious issue.', zhEx: '顧客投訴是一個嚴重問題。' },
+            { no: 101, en: 'concern', zh: '擔憂 / 關切', enEx: 'Customer concerns were addressed promptly.', zhEx: '顧客的關切得到即時處理。' },
+            { no: 102, en: 'opportunity', zh: '機會', enEx: 'This product launch creates new opportunities.', zhEx: '這次產品發佈帶來新機會。' },
+            { no: 103, en: 'resource', zh: '資源', enEx: 'Human resources are crucial for growth.', zhEx: '人力資源對成長至關重要。' },
+            { no: 104, en: 'tool', zh: '工具', enEx: 'The new software is a powerful tool.', zhEx: '新軟體是強大的工具。' },
+            { no: 105, en: 'software', zh: '軟體', enEx: 'The company upgraded its software.', zhEx: '公司升級了軟體。' },
+            { no: 106, en: 'hardware', zh: '硬體', enEx: 'Hardware upgrades improved performance.', zhEx: '硬體升級提升了效能。' },
+            { no: 107, en: 'database', zh: '資料庫', enEx: 'The database stores customer information.', zhEx: '資料庫儲存顧客資訊。' },
+            { no: 108, en: 'system', zh: '系統', enEx: 'The system crashed last night.', zhEx: '系統昨晚當機了。' },
+            { no: 109, en: 'network', zh: '網路', enEx: 'A secure network protects sensitive data.', zhEx: '安全的網路保護敏感資料。' },
+            { no: 110, en: 'communication', zh: '溝通', enEx: 'Effective communication improves teamwork.', zhEx: '有效溝通提升團隊合作。' },
+            { no: 111, en: 'email', zh: '電子郵件', enEx: 'I sent an email to confirm the order.', zhEx: '我發送了一封電子郵件確認訂單。' },
+            { no: 112, en: 'phone', zh: '電話', enEx: 'The client called me on the phone.', zhEx: '客戶打電話給我。' },
+            { no: 113, en: 'message', zh: '訊息', enEx: 'I received a message about the shipment.', zhEx: '我收到關於出貨的訊息。' },
+            { no: 114, en: 'notification', zh: '通知', enEx: 'The system sent a notification about updates.', zhEx: '系統發送了更新通知。' },
+            { no: 115, en: 'feedback', zh: '回饋', enEx: 'Customer feedback helps improve products.', zhEx: '顧客回饋有助於改進產品。' },
+            { no: 116, en: 'review', zh: '評價 / 審查', enEx: 'The product received excellent reviews.', zhEx: '該產品獲得了優良評價。' },
+            { no: 117, en: 'survey', zh: '調查', enEx: 'The company conducted a customer survey.', zhEx: '公司進行了顧客調查。' },
+            { no: 118, en: 'evaluation', zh: '評估', enEx: 'Staff evaluation is done annually.', zhEx: '員工評估每年進行一次。' },
+            { no: 119, en: 'appraisal', zh: '評價 / 考核', enEx: 'Performance appraisal determines bonuses.', zhEx: '績效考核決定獎金。' },
+            { no: 120, en: 'bonus', zh: '獎金', enEx: 'Employees received a year-end bonus.', zhEx: '員工獲得了年終獎金。' },
+            { no: 121, en: 'salary', zh: '薪水', enEx: 'The new position offers a higher salary.', zhEx: '新職位提供更高薪水。' },
+            { no: 122, en: 'payment', zh: '付款', enEx: 'Payment must be made within 30 days.', zhEx: '付款必須在 30 天內完成。' },
+            { no: 123, en: 'deposit', zh: '存款 / 訂金', enEx: 'A deposit is required to secure the order.', zhEx: '需要訂金以確認訂單。' },
+            { no: 124, en: 'withdraw', zh: '提取 / 提款', enEx: 'Customers can withdraw money from ATMs.', zhEx: '顧客可以從自動提款機提取現金。' },
+            { no: 125, en: 'transfer', zh: '轉帳 / 調動', enEx: 'The funds were transferred to the account.', zhEx: '資金已轉入帳戶。' },
+            { no: 126, en: 'balance', zh: '餘額', enEx: 'Check your account balance regularly.', zhEx: '定期檢查帳戶餘額。' },
+            { no: 127, en: 'account', zh: '帳戶', enEx: 'Open a new bank account online.', zhEx: '在線開設新的銀行帳戶。' },
+            { no: 128, en: 'loan', zh: '貸款', enEx: 'The bank approved the loan application.', zhEx: '銀行批准了貸款申請。' },
+            { no: 129, en: 'interest', zh: '利息', enEx: 'The loan accrues interest monthly.', zhEx: '貸款每月產生利息。' },
+            { no: 130, en: 'tax', zh: '稅金', enEx: 'Pay taxes before the deadline.', zhEx: '在截止日前繳納稅金。' },
+            { no: 131, en: 'refund', zh: '退款', enEx: 'The company issued a full refund.', zhEx: '公司全額退款。' },
+            { no: 132, en: 'benefit', zh: '福利 / 好處', enEx: 'Employees enjoy many benefits.', zhEx: '員工享有許多福利。' },
+            { no: 133, en: 'insurance', zh: '保險', enEx: 'Health insurance is provided by the company.', zhEx: '公司提供健康保險。' },
+            { no: 134, en: 'leave', zh: '休假 / 請假', enEx: 'Employees can take leave with approval.', zhEx: '員工可經批准請假。' },
+            { no: 135, en: 'vacation', zh: '假期', enEx: 'She went on vacation to Hawaii.', zhEx: '她去夏威夷度假。' },
+            { no: 136, en: 'absence', zh: '缺席 / 缺勤', enEx: 'Absence must be reported in advance.', zhEx: '缺席必須提前報告。' },
+            { no: 137, en: 'attendance', zh: '出席 / 出勤', enEx: 'Attendance is mandatory for the seminar.', zhEx: '研討會必須出席。' },
+            { no: 138, en: 'punctuality', zh: '守時', enEx: 'Punctuality is appreciated in the workplace.', zhEx: '工作中守時很重要。' },
+            { no: 139, en: 'discipline', zh: '紀律', enEx: 'Employees must maintain discipline.', zhEx: '員工必須保持紀律。' },
+            { no: 140, en: 'responsibility', zh: '責任', enEx: 'It is your responsibility to complete tasks.', zhEx: '完成任務是你的責任。' },
+            { no: 141, en: 'duty', zh: '職責', enEx: 'Performing your duty is essential.', zhEx: '履行職責是必須的。' },
+            { no: 142, en: 'task', zh: '任務', enEx: 'Complete the assigned tasks on time.', zhEx: '按時完成分配的任務。' },
+            { no: 143, en: 'assignment', zh: '作業 / 任務', enEx: 'The assignment is due tomorrow.', zhEx: '作業明天到期。' },
+            { no: 144, en: 'deadline', zh: '截止日期', enEx: 'Submit the report before the deadline.', zhEx: '在截止日前提交報告。' },
+            { no: 145, en: 'priority', zh: '優先順序', enEx: 'Finish high-priority tasks first.', zhEx: '先完成高優先順序的任務。' },
+            { no: 146, en: 'goal', zh: '目標', enEx: 'Set realistic goals for the project.', zhEx: '為專案設定合理目標。' },
+            { no: 147, en: 'objective', zh: '目標', enEx: 'The objective is to increase sales.', zhEx: '目標是增加銷售額。' },
+            { no: 148, en: 'plan', zh: '計畫', enEx: 'We need a new plan for marketing.', zhEx: '我們需要新的行銷計畫。' },
+            { no: 149, en: 'strategy', zh: '策略', enEx: 'The company developed a new strategy.', zhEx: '公司制定了新策略。' },
+            { no: 150, en: 'vision', zh: '願景 / 遠景', enEx: 'The CEO shared the company vision.', zhEx: '執行長分享了公司的願景。' },
+
+        ];
+
+        // Utilities
+        function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[b[i], b[j]] = [b[j], b[i]] } return b }
+
+        // State
+        let deck = shuffle(VOCAB.slice());
+        let idx = 0;
+        let flipped = false;
+        let autoplay = false;
+        let timer = null;
+
+        // Elements
+        const cardEl = document.getElementById('card');
+        const wordEl = document.getElementById('word');
+        const exEl = document.getElementById('ex');
+        const zhEl = document.getElementById('zh');
+        const zhExEl = document.getElementById('zhEx');
+        const metaFront = document.getElementById('metaFront');
+        const counter = document.getElementById('counter');
+        const previewGrid = document.getElementById('previewGrid');
+        const intervalInput = document.getElementById('interval');
+        const autoBtn = document.getElementById('autoBtn');
+        const exportBtn = document.getElementById('exportBtn');
+
+        function render() {
+            const c = deck[idx];
+            wordEl.textContent = c.en;
+            exEl.textContent = c.enEx;
+            zhEl.textContent = c.zh;
+            zhExEl.textContent = c.zhEx;
+            metaFront.textContent = 'No. ' + c.no;
+            counter.textContent = `卡片 ${idx + 1} / ${deck.length}`;
+            cardEl.classList.toggle('flipped', flipped);
+
+            // speakWord(c.en);            
+        }
+
+        function nextCard() { idx = (idx + 1) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function prevCard() { idx = (idx - 1 + deck.length) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function randomCard() { idx = Math.floor(Math.random() * deck.length); flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function reshuffle() { deck = shuffle(deck); idx = 0; flipped = false; render(); buildPreview(); }
+
+        function startAuto() { autoplay = true; autoBtn.textContent = '停止自動'; timer = setInterval(() => { nextCard(); }, Math.max(500, Number(intervalInput.value) || 2000)); }
+        function stopAuto() { autoplay = false; autoBtn.textContent = '開始自動'; clearInterval(timer); timer = null; }
+        function toggleAuto() { if (autoplay) stopAuto(); else startAuto(); }
+
+        // Events
+        document.getElementById('shuffleBtn').addEventListener('click', () => { reshuffle(); });
+        document.getElementById('randomBtn').addEventListener('click', () => { randomCard(); });
+        document.getElementById('nextBtn').addEventListener('click', () => { nextCard(); });
+        document.getElementById('prevBtn').addEventListener('click', () => { prevCard(); });
+        document.getElementById('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
+        autoBtn.addEventListener('click', () => { toggleAuto(); });
+        exportBtn.addEventListener('click', () => { exportCSV(); });
+
+        cardEl.addEventListener('click', () => { flipped = !flipped; render(); });
+        cardEl.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+        });
+
+        intervalInput.addEventListener('change', () => { if (autoplay) { stopAuto(); startAuto(); } });
+
+        // Build preview grid
+        function buildPreview() {
+            previewGrid.innerHTML = ''; deck.forEach((d, i) => {
+                const btn = document.createElement('button'); btn.className = 'chip'; btn.textContent = d.no + '. ' + d.en; btn.addEventListener('click', () => { idx = i; flipped = false; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }); previewGrid.appendChild(btn);
+            })
+        }
+
+        // Export current deck to CSV
+        function exportCSV() {
+            const rows = [['No', 'Vocabulary', 'Chinese', 'Example (EN)', '例句 (中)']];
+            deck.forEach(d => rows.push([d.no, d.en, d.zh, d.enEx, d.zhEx]));
+            const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'Day1_Flashcards_1-150.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        }
+
+        // Init
+        render(); buildPreview();
+
+        // Global keyboard navigation when card not focused
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement === cardEl) return;
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+        });
+
+        const speakBtn = document.getElementById('speakBtn');
+
+        function speakWord(word) {
+            if (!window.speechSynthesis) return;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US'; // 英文發音
+            window.speechSynthesis.cancel(); // 先停止前一個發音
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 點擊按鈕發音
+
+        speakBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
+            speakWord(deck[idx].en);
+        });
+
+    </script>
+
+</body>
+
+</html>

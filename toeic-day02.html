@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Day 2 — 旅行 & 會議 — Flashcards (1–150)</title>
+    <style>
+        :root {
+            --bg: #f0f8f0;
+            --card: #ffffff;
+            --muted: #4a5d43;
+            --accent: #2e4b2e;
+            --shadow: rgba(46, 75, 46, 0.2);
+            --border: #a3c9a3;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
+            margin: 0;
+            background: var(--bg) url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat;
+            /* 木質紋理 */
+            color: var(--accent);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 18px
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-family: 'Georgia', serif;
+            color: var(--accent);
+        }
+
+        p.lead {
+            margin: 6px 0 18px;
+            color: var(--muted)
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            box-shadow: 2px 2px 5px var(--shadow);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .card-area {
+            perspective: 1200px
+        }
+
+        .card {
+            width: 100%;
+            height: 360px;
+            border-radius: 16px;
+            background: var(--card);
+            box-shadow: 0 8px 20px var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 450ms cubic-bezier(.2, .8, .2, 1);
+            border: 2px solid var(--border);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg)
+        }
+
+        .face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 26px;
+            backface-visibility: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        .front {
+            font-weight: 700
+        }
+
+        .front .word {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .front .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+            text-align: center
+        }
+
+        .back .zh {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .back .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .meta {
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .preview {
+            margin-top: 14px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px
+        }
+
+        .chip {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 1px 1px 4px var(--shadow);
+            font-family: 'Georgia', serif;
+        }
+
+        .footer {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        input[type=number] {
+            width: 100px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Georgia', serif;
+        }
+
+        @media (max-width:640px) {
+            .card {
+                height: 260px
+            }
+
+            .front .word {
+                font-size: 34px
+            }
+
+            .back .zh {
+                font-size: 24px
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Day 2 — 旅行 & 會議 — Flashcards (1–150)</h1>
+        </header>
+
+        <div class="controls">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button class="btn" id="shuffleBtn">洗牌</button>
+                <button class="btn" id="randomBtn">隨機</button>
+                <button class="btn" id="autoBtn">開始自動</button>
+                <button class="btn" id="exportBtn">匯出當前卡片清單 (CSV)</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="meta" id="counter">卡片 1 / 150</div>
+            </div>
+        </div>
+
+        <div class="card-area">
+            <div class="card" id="card" tabindex="0" aria-label="Flashcard">
+                <div class="face front">
+                    <div class="meta" id="metaFront">No. 1</div>
+                    <div class="word" id="word">office</div>
+                    <button id="speakBtn" class="btn" style="margin-top:8px;padding:4px 8px;font-size:14px;">🔊
+                        發音</button>
+                    <div class="ex" id="ex">She works in a big office in Taipei.</div>
+                </div>
+                <div class="face back">
+                    <div class="meta">&nbsp;</div>
+                    <div class="zh" id="zh">辦公室</div>
+                    <div class="ex" id="zhEx">她在台北的一間大辦公室工作。</div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:12px">
+            <div class="nav">
+                <button class="btn" id="prevBtn">上一張</button>
+                <button class="btn" id="nextBtn">下一張</button>
+                <button class="btn" id="flipBtn">翻面</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px">
+                <label style="font-size:13px;color:var(--muted)">間隔(ms):</label>
+                <input type="number" id="interval" value="4000" min="500" />
+            </div>
+        </div>
+
+        <section class="preview">
+            <h3 style="margin:10px 0 8px">快速預覽（點選跳至該字）</h3>
+            <div class="grid" id="previewGrid"></div>
+        </section>
+
+        <div class="footer">Tip: Space – 翻面 · ← → – 前/後 · 若要列印，請使用瀏覽器列印功能。</div>
+    </div>
+
+    <script>
+        // Full 1–150 vocabulary
+        const VOCAB = [
+            { no: 1, en: 'airport', zh: '機場', enEx: 'I arrived at the airport two hours early.', zhEx: '我提前兩小時到達機場。' },
+            { no: 2, en: 'flight', zh: '航班', enEx: 'Our flight was delayed due to weather.', zhEx: '因天氣原因，我們的航班延誤了。' },
+            { no: 3, en: 'boarding', zh: '登機', enEx: 'Boarding will start in 20 minutes.', zhEx: '登機將在 20 分鐘後開始。' },
+            { no: 4, en: 'delay', zh: '延誤', enEx: 'The train is delayed by 30 minutes.', zhEx: '火車延誤了 30 分鐘。' },
+            { no: 5, en: 'cancellation', zh: '取消', enEx: 'Flight cancellation was announced this morning.', zhEx: '航班取消於今早公告。' },
+            { no: 6, en: 'reservation', zh: '預訂', enEx: 'I made a hotel reservation online.', zhEx: '我在網上預訂了飯店。' },
+            { no: 7, en: 'itinerary', zh: '行程表', enEx: 'The travel agent sent us the itinerary.', zhEx: '旅行社寄給我們行程表。' },
+            { no: 8, en: 'baggage', zh: '行李', enEx: 'Your baggage will be checked at the counter.', zhEx: '你的行李會在櫃檯檢查。' },
+            { no: 9, en: 'luggage', zh: '行李', enEx: 'He lost his luggage during the trip.', zhEx: '他在旅途中丟失了行李。' },
+            { no: 10, en: 'customs', zh: '海關', enEx: 'We went through customs quickly.', zhEx: '我們很快通過了海關。' },
+            { no: 11, en: 'passport', zh: '護照', enEx: 'Don’t forget your passport.', zhEx: '別忘了帶護照。' },
+            { no: 12, en: 'visa', zh: '簽證', enEx: 'You need a visa to enter the country.', zhEx: '進入該國需要簽證。' },
+            { no: 13, en: 'ticket', zh: '票', enEx: 'I bought a train ticket online.', zhEx: '我在網上買了火車票。' },
+            { no: 14, en: 'gate', zh: '登機口', enEx: 'The flight departs from gate 5.', zhEx: '航班從 5 號登機口出發。' },
+            { no: 15, en: 'terminal', zh: '航廈', enEx: 'The airport terminal is very crowded.', zhEx: '機場航廈非常擁擠。' },
+            { no: 16, en: 'security', zh: '安全檢查', enEx: 'Please remove liquids at security.', zhEx: '請在安檢時取出液體。' },
+            { no: 17, en: 'check-in', zh: '辦理登機 / 入住', enEx: 'We completed hotel check-in quickly.', zhEx: '我們很快完成了飯店入住手續。' },
+            { no: 18, en: 'lounge', zh: '休息室', enEx: 'The VIP lounge is comfortable.', zhEx: '貴賓休息室很舒適。' },
+            { no: 19, en: 'seat', zh: '座位', enEx: 'My seat is by the window.', zhEx: '我的座位靠窗。' },
+            { no: 20, en: 'aisle', zh: '走道', enEx: 'I prefer an aisle seat.', zhEx: '我比較喜歡靠走道的座位。' },
+            { no: 21, en: 'window', zh: '窗戶 / 窗邊座位', enEx: 'The window view is beautiful.', zhEx: '窗外的景色很美。' },
+            { no: 22, en: 'schedule', zh: '時間表', enEx: 'Check the train schedule before you leave.', zhEx: '出發前確認火車時刻表。' },
+            { no: 23, en: 'timetable', zh: '時刻表', enEx: 'The bus timetable is posted at the station.', zhEx: '公車時刻表張貼在車站。' },
+            { no: 24, en: 'departure', zh: '出發', enEx: 'Our departure is scheduled at 9 a.m.', zhEx: '我們的出發時間定於上午 9 點。' },
+            { no: 25, en: 'arrival', zh: '抵達', enEx: 'The arrival was delayed due to traffic.', zhEx: '因交通原因抵達延誤。' },
+            { no: 26, en: 'platform', zh: '月台', enEx: 'The train leaves from platform 3.', zhEx: '火車從 3 號月台出發。' },
+            { no: 27, en: 'shuttle', zh: '接駁車', enEx: 'Take the shuttle to the hotel.', zhEx: '搭接駁車去飯店。' },
+            { no: 28, en: 'transport', zh: '交通 / 運輸', enEx: 'Public transport is convenient here.', zhEx: '這裡的公共交通很方便。' },
+            { no: 29, en: 'taxi', zh: '計程車', enEx: 'We took a taxi to the airport.', zhEx: '我們搭計程車去機場。' },
+            { no: 30, en: 'bus', zh: '公車', enEx: 'The bus arrives every 10 minutes.', zhEx: '公車每 10 分鐘一班。' },
+            { no: 31, en: 'train', zh: '火車', enEx: 'The train is very fast.', zhEx: '火車非常快。' },
+            { no: 32, en: 'car rental', zh: '汽車租賃', enEx: 'We booked a car rental online.', zhEx: '我們在網上預訂了租車服務。' },
+            { no: 33, en: 'hotel', zh: '飯店', enEx: 'The hotel is near the city center.', zhEx: '飯店在市中心附近。' },
+            { no: 34, en: 'check-in', zh: '入住登記', enEx: 'Hotel check-in starts at 3 p.m.', zhEx: '飯店入住登記從下午 3 點開始。' },
+            { no: 35, en: 'check-out', zh: '退房', enEx: 'Check-out is at noon.', zhEx: '退房時間是中午。' },
+            { no: 36, en: 'room', zh: '房間', enEx: 'Our room has a nice view.', zhEx: '我們的房間景色很好。' },
+            { no: 37, en: 'key', zh: '鑰匙', enEx: 'The receptionist gave us the room key.', zhEx: '接待員給了我們房間鑰匙。' },
+            { no: 38, en: 'reception', zh: '櫃檯', enEx: 'The reception is on the first floor.', zhEx: '櫃檯在一樓。' },
+            { no: 39, en: 'concierge', zh: '服務台', enEx: 'The concierge helped us book a taxi.', zhEx: '服務台幫我們叫了計程車。' },
+            { no: 40, en: 'service', zh: '服務', enEx: 'The hotel service was excellent.', zhEx: '飯店服務非常好。' },
+            { no: 41, en: 'facility', zh: '設施', enEx: 'The gym facility is open 24 hours.', zhEx: '健身設施全天開放。' },
+            { no: 42, en: 'amenity', zh: '設施 / 便利設備', enEx: 'The hotel amenities include a pool and spa.', zhEx: '飯店設施包括游泳池和 SPA。' },
+            { no: 43, en: 'conference', zh: '會議', enEx: 'We attended an international conference.', zhEx: '我們參加了一場國際會議。' },
+            { no: 44, en: 'seminar', zh: '研討會', enEx: 'The seminar focused on marketing.', zhEx: '研討會聚焦於行銷。' },
+            { no: 45, en: 'workshop', zh: '工作坊', enEx: 'The workshop was very interactive.', zhEx: '工作坊互動性很高。' },
+            { no: 46, en: 'session', zh: '課程 / 會議場次', enEx: 'The morning session starts at 9 a.m.', zhEx: '上午課程從 9 點開始。' },
+            { no: 47, en: 'participant', zh: '參與者', enEx: 'Each participant received a certificate.', zhEx: '每位參與者都拿到證書。' },
+            { no: 48, en: 'attendee', zh: '出席者', enEx: 'There were 200 attendees at the seminar.', zhEx: '研討會有 200 名出席者。' },
+            { no: 49, en: 'register', zh: '登記', enEx: 'Please register for the event online.', zhEx: '請在線上登記活動。' },
+            { no: 50, en: 'enrollment', zh: '註冊 / 報名', enEx: 'Enrollment for the workshop closes tomorrow.', zhEx: '工作坊報名明天截止。' },
+            { no: 51, en: 'speaker', zh: '講者', enEx: 'The speaker shared his travel experiences.', zhEx: '講者分享了他的旅行經驗。' },
+            { no: 52, en: 'presenter', zh: '發表者', enEx: 'The presenter explained the project details.', zhEx: '發表者解釋了專案細節。' },
+            { no: 53, en: 'microphone', zh: '麥克風', enEx: 'The microphone was not working properly.', zhEx: '麥克風運作不正常。' },
+            { no: 54, en: 'projector', zh: '投影機', enEx: 'The projector displayed the slides clearly.', zhEx: '投影機清楚地顯示投影片。' },
+            { no: 55, en: 'presentation', zh: '簡報', enEx: 'Her presentation impressed everyone.', zhEx: '她的簡報給大家留下深刻印象。' },
+            { no: 56, en: 'slide', zh: '投影片', enEx: 'Each slide contains important information.', zhEx: '每張投影片都有重要資訊。' },
+            { no: 57, en: 'material', zh: '資料 / 材料', enEx: 'Please prepare the material before the workshop.', zhEx: '請在工作坊前準備好資料。' },
+            { no: 58, en: 'handout', zh: '講義', enEx: 'The handout was given to all participants.', zhEx: '講義發給所有參與者。' },
+            { no: 59, en: 'agenda', zh: '議程', enEx: 'The agenda includes three discussion topics.', zhEx: '議程包含三個討論議題。' },
+            { no: 60, en: 'topic', zh: '主題', enEx: 'The topic of the seminar was leadership.', zhEx: '研討會的主題是領導力。' },
+            { no: 61, en: 'discussion', zh: '討論', enEx: 'The discussion lasted for two hours.', zhEx: '討論持續了兩個小時。' },
+            { no: 62, en: 'debate', zh: '辯論', enEx: 'There was a debate about environmental policies.', zhEx: '有關環境政策的辯論進行中。' },
+            { no: 63, en: 'question', zh: '問題', enEx: 'She asked a question during the seminar.', zhEx: '她在研討會上提出了一個問題。' },
+            { no: 64, en: 'answer', zh: '答案', enEx: 'The speaker answered all questions patiently.', zhEx: '講者耐心回答所有問題。' },
+            { no: 65, en: 'feedback', zh: '回饋', enEx: 'Participants provided feedback after the session.', zhEx: '參加者在課程後提供回饋。' },
+            { no: 66, en: 'evaluation', zh: '評估', enEx: 'The evaluation form is mandatory.', zhEx: '評估表是必填的。' },
+            { no: 67, en: 'certificate', zh: '證書', enEx: 'Each attendee received a certificate.', zhEx: '每位出席者都收到證書。' },
+            { no: 68, en: 'award', zh: '獎項', enEx: 'She won an award for best presentation.', zhEx: '她因最佳簡報獲獎。' },
+            { no: 69, en: 'networking', zh: '聯誼 / 社交', enEx: 'Networking helps build professional connections.', zhEx: '聯誼有助於建立職業關係。' },
+            { no: 70, en: 'break', zh: '休息', enEx: 'Let’s take a short coffee break.', zhEx: '我們休息一下喝咖啡。' },
+            { no: 71, en: 'refreshment', zh: '點心 / 茶點', enEx: 'Refreshments are available in the lounge.', zhEx: '茶點在休息室提供。' },
+            { no: 72, en: 'lunch', zh: '午餐', enEx: 'Lunch will be served at 12 p.m.', zhEx: '午餐將於中午 12 點供應。' },
+            { no: 73, en: 'dinner', zh: '晚餐', enEx: 'Dinner is included in the package.', zhEx: '套餐包含晚餐。' },
+            { no: 74, en: 'coffee', zh: '咖啡', enEx: 'Would you like some coffee?', zhEx: '你想喝點咖啡嗎？' },
+            { no: 75, en: 'tea', zh: '茶', enEx: 'She prefers green tea.', zhEx: '她比較喜歡喝綠茶。' },
+            { no: 76, en: 'snack', zh: '小吃 / 點心', enEx: 'Snacks are provided during the break.', zhEx: '休息時提供點心。' },
+            { no: 77, en: 'accommodation', zh: '住宿', enEx: 'Accommodation is arranged for all participants.', zhEx: '為所有參加者安排了住宿。' },
+            { no: 78, en: 'travel', zh: '旅行', enEx: 'We love to travel during holidays.', zhEx: '我們喜歡在假期旅行。' },
+            { no: 79, en: 'tour', zh: '旅遊 / 觀光行程', enEx: 'The guided tour starts at 10 a.m.', zhEx: '導覽行程從上午 10 點開始。' },
+            { no: 80, en: 'sightseeing', zh: '觀光', enEx: 'We spent the day sightseeing in Paris.', zhEx: '我們在巴黎觀光了一整天。' },
+            { no: 81, en: 'attraction', zh: '景點', enEx: 'The Eiffel Tower is a famous attraction.', zhEx: '艾菲爾鐵塔是著名景點。' },
+            { no: 82, en: 'map', zh: '地圖', enEx: 'Use the map to find the hotel.', zhEx: '用地圖找飯店。' },
+            { no: 83, en: 'guide', zh: '導遊 / 指南', enEx: 'The guide explained the history of the city.', zhEx: '導遊解釋了這座城市的歷史。' },
+            { no: 84, en: 'itinerary', zh: '行程表', enEx: 'Check your itinerary for the next day.', zhEx: '查看你隔天的行程表。' },
+            { no: 85, en: 'plan', zh: '計畫', enEx: 'We need a plan for the trip.', zhEx: '我們需要一個旅行計畫。' },
+            { no: 86, en: 'schedule', zh: '行程 / 時間表', enEx: 'The schedule is tight but manageable.', zhEx: '行程很緊湊，但可安排。' },
+            { no: 87, en: 'excursion', zh: '短途旅行', enEx: 'The school organized a weekend excursion.', zhEx: '學校組織了一次週末短途旅行。' },
+            { no: 88, en: 'trip', zh: '旅行', enEx: 'Our trip to Japan was amazing.', zhEx: '我們的日本旅行非常棒。' },
+            { no: 89, en: 'journey', zh: '旅程', enEx: 'The journey took five hours by train.', zhEx: '這段旅程搭火車花了五個小時。' },
+            { no: 90, en: 'adventure', zh: '冒險', enEx: 'Hiking in the mountains was an adventure.', zhEx: '在山上健行是一種冒險。' },
+            { no: 91, en: 'vacation', zh: '假期', enEx: 'We are planning a summer vacation.', zhEx: '我們正在計劃暑假旅行。' },
+            { no: 92, en: 'holiday', zh: '假期', enEx: 'They went on a holiday to Europe.', zhEx: '他們去歐洲度假。' },
+            { no: 93, en: 'leave', zh: '請假 / 假期', enEx: 'He applied for leave next week.', zhEx: '他申請下週請假。' },
+            { no: 94, en: 'permit', zh: '許可證', enEx: 'A work permit is required for foreigners.', zhEx: '外國人需要工作許可證。' },
+            { no: 95, en: 'document', zh: '文件', enEx: 'Please bring all necessary documents.', zhEx: '請攜帶所有必要文件。' },
+            { no: 96, en: 'form', zh: '表格', enEx: 'Fill out this form before checking in.', zhEx: '辦理入住前請填寫這張表格。' },
+            { no: 97, en: 'application', zh: '申請', enEx: 'I submitted my visa application online.', zhEx: '我在網上提交了簽證申請。' },
+            { no: 98, en: 'request', zh: '請求', enEx: 'She made a special request for the hotel room.', zhEx: '她對飯店房間提出了特別請求。' },
+            { no: 99, en: 'approval', zh: '批准', enEx: 'The manager gave approval for the project.', zhEx: '經理批准了這個專案。' },
+            { no: 100, en: 'policy', zh: '政策', enEx: 'The company has a strict cancellation policy.', zhEx: '公司有嚴格的取消政策。' },
+            { no: 101, en: 'rule', zh: '規則', enEx: 'All participants must follow the rules.', zhEx: '所有參加者必須遵守規則。' },
+            { no: 102, en: 'regulation', zh: '規定', enEx: 'Safety regulations are strictly enforced.', zhEx: '安全規定受到嚴格執行。' },
+            { no: 103, en: 'safety', zh: '安全', enEx: 'Safety is our top priority.', zhEx: '安全是我們的首要任務。' },
+            { no: 104, en: 'emergency', zh: '緊急情況', enEx: 'Call this number in case of emergency.', zhEx: '發生緊急情況請撥打這個號碼。' },
+            { no: 105, en: 'instruction', zh: '指示', enEx: 'Follow the instructions carefully.', zhEx: '請仔細遵循指示。' },
+            { no: 106, en: 'guideline', zh: '指南', enEx: 'The guidelines explain the procedure.', zhEx: '指南說明了程序。' },
+            { no: 107, en: 'procedure', zh: '程序', enEx: 'The procedure is simple and efficient.', zhEx: '程序簡單且有效率。' },
+            { no: 108, en: 'requirement', zh: '要求', enEx: 'Meeting the requirement is essential.', zhEx: '達到要求是必須的。' },
+            { no: 109, en: 'objective', zh: '目標', enEx: 'The objective of this session is clear.', zhEx: '本課程的目標很明確。' },
+            { no: 110, en: 'goal', zh: '目標', enEx: 'Setting a goal helps you stay focused.', zhEx: '設定目標幫助你保持專注。' },
+            { no: 111, en: 'target', zh: '目標 / 指標', enEx: 'The sales target must be achieved.', zhEx: '銷售目標必須達成。' },
+            { no: 112, en: 'strategy', zh: '策略', enEx: 'We need a strategy to win the contract.', zhEx: '我們需要策略來贏得合約。' },
+            { no: 113, en: 'plan', zh: '計畫', enEx: 'The project plan was approved.', zhEx: '專案計畫已獲批准。' },
+            { no: 114, en: 'project', zh: '專案', enEx: 'The team completed the project on time.', zhEx: '團隊準時完成專案。' },
+            { no: 115, en: 'team', zh: '團隊', enEx: 'A good team works efficiently.', zhEx: '好的團隊工作效率高。' },
+            { no: 116, en: 'leader', zh: '領導者', enEx: 'The team leader guided everyone.', zhEx: '團隊領導者指導大家。' },
+            { no: 117, en: 'member', zh: '成員', enEx: 'Each member contributed to the success.', zhEx: '每位成員都為成功做出貢獻。' },
+            { no: 118, en: 'staff', zh: '員工', enEx: 'The staff handled customer inquiries well.', zhEx: '員工很好地處理了客戶諮詢。' },
+            { no: 119, en: 'personnel', zh: '人事 / 員工', enEx: 'Personnel management is important.', zhEx: '人事管理很重要。' },
+            { no: 120, en: 'employee', zh: '員工', enEx: 'Employees must follow company policies.', zhEx: '員工必須遵守公司政策。' },
+            { no: 121, en: 'colleague', zh: '同事', enEx: 'I discussed the plan with my colleague.', zhEx: '我和同事討論了計畫。' },
+            { no: 122, en: 'manager', zh: '經理', enEx: 'The manager approved the budget.', zhEx: '經理批准了預算。' },
+            { no: 123, en: 'supervisor', zh: '主管', enEx: 'The supervisor gave constructive feedback.', zhEx: '主管給了建設性的回饋。' },
+            { no: 124, en: 'decision', zh: '決定', enEx: 'Making the right decision is crucial.', zhEx: '做出正確決定至關重要。' },
+            { no: 125, en: 'solution', zh: '解決方案', enEx: 'We found a solution to the technical problem.', zhEx: '我們找到了技術問題的解決方案。' },
+            { no: 126, en: 'problem', zh: '問題', enEx: 'The main problem is lack of resources.', zhEx: '主要問題是資源不足。' },
+            { no: 127, en: 'issue', zh: '議題 / 問題', enEx: 'This issue needs immediate attention.', zhEx: '這個議題需要立即處理。' },
+            { no: 128, en: 'risk', zh: '風險', enEx: 'Every investment carries a risk.', zhEx: '每項投資都有風險。' },
+            { no: 129, en: 'opportunity', zh: '機會', enEx: 'Traveling abroad is a great opportunity.', zhEx: '出國旅行是一個很好的機會。' },
+            { no: 130, en: 'resource', zh: '資源', enEx: 'Human resources are valuable assets.', zhEx: '人力資源是寶貴資產。' },
+            { no: 131, en: 'tool', zh: '工具', enEx: 'Online tools help improve productivity.', zhEx: '在線工具有助於提升效率。' },
+            { no: 132, en: 'equipment', zh: '設備', enEx: 'Safety equipment must be used at all times.', zhEx: '必須隨時使用安全設備。' },
+            { no: 133, en: 'software', zh: '軟體', enEx: 'The new software improves workflow.', zhEx: '新軟體改善了工作流程。' },
+            { no: 134, en: 'hardware', zh: '硬體', enEx: 'Upgrading hardware can speed up the system.', zhEx: '升級硬體可以加快系統速度。' },
+            { no: 135, en: 'database', zh: '資料庫', enEx: 'The database stores customer information.', zhEx: '資料庫儲存客戶資訊。' },
+            { no: 136, en: 'system', zh: '系統', enEx: 'The booking system is easy to use.', zhEx: '訂票系統很容易使用。' },
+            { no: 137, en: 'network', zh: '網路', enEx: 'The office network is secure.', zhEx: '辦公室網路很安全。' },
+            { no: 138, en: 'communication', zh: '溝通', enEx: 'Clear communication prevents misunderstandings.', zhEx: '清楚的溝通可避免誤會。' },
+            { no: 139, en: 'email', zh: '電子郵件', enEx: 'I sent the email yesterday.', zhEx: '我昨天發送了電子郵件。' },
+            { no: 140, en: 'phone', zh: '電話', enEx: 'The manager called me on the phone.', zhEx: '經理打電話給我。' },
+            { no: 141, en: 'message', zh: '訊息', enEx: 'I received a message from my colleague.', zhEx: '我收到同事的訊息。' },
+            { no: 142, en: 'boarding', zh: '登機', enEx: 'Boarding will begin shortly.', zhEx: '登機即將開始。' },
+            { no: 143, en: 'flight', zh: '航班', enEx: 'The flight was canceled due to weather.', zhEx: '因天氣原因，航班被取消。' },
+            { no: 144, en: 'check-in', zh: '辦理登機 / 入住', enEx: 'Please check-in two hours before the flight.', zhEx: '請在航班前兩小時辦理登機。' },
+            { no: 145, en: 'reservation', zh: '預訂', enEx: 'I confirmed the hotel reservation.', zhEx: '我確認了飯店預訂。' },
+            { no: 146, en: 'schedule', zh: '行程 / 時間表', enEx: 'The schedule is packed with activities.', zhEx: '行程安排得滿滿的。' },
+            { no: 147, en: 'transport', zh: '交通 / 運輸', enEx: 'Public transport is convenient here.', zhEx: '這裡的公共交通很方便。' },
+            { no: 148, en: 'taxi', zh: '計程車', enEx: 'We took a taxi to the airport.', zhEx: '我們搭計程車去機場。' },
+            { no: 149, en: 'bus', zh: '公車', enEx: 'The bus arrives every 15 minutes.', zhEx: '公車每 15 分鐘一班。' },
+            { no: 150, en: 'train', zh: '火車', enEx: 'The train to the city center is fast.', zhEx: '去市中心的火車很快。' }
+
+        ];
+
+        // Utilities
+        function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[b[i], b[j]] = [b[j], b[i]] } return b }
+
+        // State
+        let deck = shuffle(VOCAB.slice());
+        let idx = 0;
+        let flipped = false;
+        let autoplay = false;
+        let timer = null;
+
+        // Elements
+        const cardEl = document.getElementById('card');
+        const wordEl = document.getElementById('word');
+        const exEl = document.getElementById('ex');
+        const zhEl = document.getElementById('zh');
+        const zhExEl = document.getElementById('zhEx');
+        const metaFront = document.getElementById('metaFront');
+        const counter = document.getElementById('counter');
+        const previewGrid = document.getElementById('previewGrid');
+        const intervalInput = document.getElementById('interval');
+        const autoBtn = document.getElementById('autoBtn');
+        const exportBtn = document.getElementById('exportBtn');
+
+        function render() {
+            const c = deck[idx];
+            wordEl.textContent = c.en;
+            exEl.textContent = c.enEx;
+            zhEl.textContent = c.zh;
+            zhExEl.textContent = c.zhEx;
+            metaFront.textContent = 'No. ' + c.no;
+            counter.textContent = `卡片 ${idx + 1} / ${deck.length}`;
+            cardEl.classList.toggle('flipped', flipped);
+
+            // speakWord(c.en);            
+        }
+
+        function nextCard() { idx = (idx + 1) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function prevCard() { idx = (idx - 1 + deck.length) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function randomCard() { idx = Math.floor(Math.random() * deck.length); flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function reshuffle() { deck = shuffle(deck); idx = 0; flipped = false; render(); buildPreview(); }
+
+        function startAuto() { autoplay = true; autoBtn.textContent = '停止自動'; timer = setInterval(() => { nextCard(); }, Math.max(500, Number(intervalInput.value) || 2000)); }
+        function stopAuto() { autoplay = false; autoBtn.textContent = '開始自動'; clearInterval(timer); timer = null; }
+        function toggleAuto() { if (autoplay) stopAuto(); else startAuto(); }
+
+        // Events
+        document.getElementById('shuffleBtn').addEventListener('click', () => { reshuffle(); });
+        document.getElementById('randomBtn').addEventListener('click', () => { randomCard(); });
+        document.getElementById('nextBtn').addEventListener('click', () => { nextCard(); });
+        document.getElementById('prevBtn').addEventListener('click', () => { prevCard(); });
+        document.getElementById('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
+        autoBtn.addEventListener('click', () => { toggleAuto(); });
+        exportBtn.addEventListener('click', () => { exportCSV(); });
+
+        cardEl.addEventListener('click', () => { flipped = !flipped; render(); });
+        cardEl.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+        });
+
+        intervalInput.addEventListener('change', () => { if (autoplay) { stopAuto(); startAuto(); } });
+
+        // Build preview grid
+        function buildPreview() {
+            previewGrid.innerHTML = ''; deck.forEach((d, i) => {
+                const btn = document.createElement('button'); btn.className = 'chip'; btn.textContent = d.no + '. ' + d.en; btn.addEventListener('click', () => { idx = i; flipped = false; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }); previewGrid.appendChild(btn);
+            })
+        }
+
+        // Export current deck to CSV
+        function exportCSV() {
+            const rows = [['No', 'Vocabulary', 'Chinese', 'Example (EN)', '例句 (中)']];
+            deck.forEach(d => rows.push([d.no, d.en, d.zh, d.enEx, d.zhEx]));
+            const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'Day1_Flashcards_1-150.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        }
+
+        // Init
+        render(); buildPreview();
+
+        // Global keyboard navigation when card not focused
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement === cardEl) return;
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+        });
+
+        const speakBtn = document.getElementById('speakBtn');
+
+        function speakWord(word) {
+            if (!window.speechSynthesis) return;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US'; // 英文發音
+            window.speechSynthesis.cancel(); // 先停止前一個發音
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 點擊按鈕發音
+
+        speakBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
+            speakWord(deck[idx].en);
+        });
+
+    </script>
+
+</body>
+
+</html>

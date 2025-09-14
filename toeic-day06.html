@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Day 6 — 物流 & 工廠 — Flashcards (1–150)</title>
+    <style>
+        :root {
+            --bg: #f0f8f0;
+            --card: #ffffff;
+            --muted: #4a5d43;
+            --accent: #2e4b2e;
+            --shadow: rgba(46, 75, 46, 0.2);
+            --border: #a3c9a3;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
+            margin: 0;
+            background: var(--bg) url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat;
+            /* 木質紋理 */
+            color: var(--accent);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 18px
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-family: 'Georgia', serif;
+            color: var(--accent);
+        }
+
+        p.lead {
+            margin: 6px 0 18px;
+            color: var(--muted)
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            box-shadow: 2px 2px 5px var(--shadow);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .card-area {
+            perspective: 1200px
+        }
+
+        .card {
+            width: 100%;
+            height: 360px;
+            border-radius: 16px;
+            background: var(--card);
+            box-shadow: 0 8px 20px var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 450ms cubic-bezier(.2, .8, .2, 1);
+            border: 2px solid var(--border);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg)
+        }
+
+        .face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 26px;
+            backface-visibility: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        .front {
+            font-weight: 700
+        }
+
+        .front .word {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .front .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+            text-align: center
+        }
+
+        .back .zh {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .back .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .meta {
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .preview {
+            margin-top: 14px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px
+        }
+
+        .chip {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 1px 1px 4px var(--shadow);
+            font-family: 'Georgia', serif;
+        }
+
+        .footer {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        input[type=number] {
+            width: 100px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Georgia', serif;
+        }
+
+        @media (max-width:640px) {
+            .card {
+                height: 260px
+            }
+
+            .front .word {
+                font-size: 34px
+            }
+
+            .back .zh {
+                font-size: 24px
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Day 6 — 物流 & 工廠 — Flashcards (1–150)</h1>
+        </header>
+
+        <div class="controls">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button class="btn" id="shuffleBtn">洗牌</button>
+                <button class="btn" id="randomBtn">隨機</button>
+                <button class="btn" id="autoBtn">開始自動</button>
+                <button class="btn" id="exportBtn">匯出當前卡片清單 (CSV)</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="meta" id="counter">卡片 1 / 150</div>
+            </div>
+        </div>
+
+        <div class="card-area">
+            <div class="card" id="card" tabindex="0" aria-label="Flashcard">
+                <div class="face front">
+                    <div class="meta" id="metaFront">No. 1</div>
+                    <div class="word" id="word">office</div>
+                    <button id="speakBtn" class="btn" style="margin-top:8px;padding:4px 8px;font-size:14px;">🔊
+                        發音</button>
+                    <div class="ex" id="ex">She works in a big office in Taipei.</div>
+                </div>
+                <div class="face back">
+                    <div class="meta">&nbsp;</div>
+                    <div class="zh" id="zh">辦公室</div>
+                    <div class="ex" id="zhEx">她在台北的一間大辦公室工作。</div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:12px">
+            <div class="nav">
+                <button class="btn" id="prevBtn">上一張</button>
+                <button class="btn" id="nextBtn">下一張</button>
+                <button class="btn" id="flipBtn">翻面</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px">
+                <label style="font-size:13px;color:var(--muted)">間隔(ms):</label>
+                <input type="number" id="interval" value="4000" min="500" />
+            </div>
+        </div>
+
+        <section class="preview">
+            <h3 style="margin:10px 0 8px">快速預覽（點選跳至該字）</h3>
+            <div class="grid" id="previewGrid"></div>
+        </section>
+
+        <div class="footer">Tip: Space – 翻面 · ← → – 前/後 · 若要列印，請使用瀏覽器列印功能。</div>
+    </div>
+
+    <script>
+        // Full 1–150 vocabulary
+        const VOCAB = [
+            { no: 1, en: 'warehouse', zh: '倉庫', enEx: 'The goods stored in the warehouse were shipped yesterday.', zhEx: '存放在倉庫的貨物昨天已出貨。' },
+            { no: 2, en: 'inventory', zh: '庫存', enEx: 'Inventory checked daily helps avoid shortages.', zhEx: '每日盤點的庫存有助於避免短缺。' },
+            { no: 3, en: 'stock', zh: '存貨', enEx: 'Stock kept in good condition ensures quality.', zhEx: '保持良好狀態的存貨確保品質。' },
+            { no: 4, en: 'supply', zh: '供應', enEx: 'Supplies delivered on time improve efficiency.', zhEx: '準時交付的供應提升效率。' },
+            { no: 5, en: 'demand', zh: '需求', enEx: 'Demand increasing rapidly creates pressure on factories.', zhEx: '快速增加的需求給工廠帶來壓力。' },
+            { no: 6, en: 'order', zh: '訂單', enEx: 'Orders placed online are processed within a day.', zhEx: '在線上下的訂單會在一天內處理。' },
+            { no: 7, en: 'shipment', zh: '裝運', enEx: 'The shipment delayed by customs arrived late.', zhEx: '被海關延誤的裝運晚到。' },
+            { no: 8, en: 'cargo', zh: '貨物', enEx: 'Cargo transported by sea takes longer.', zhEx: '海運的貨物花費更久時間。' },
+            { no: 9, en: 'freight', zh: '貨運', enEx: 'Freight carried by trucks reached the city.', zhEx: '卡車運載的貨運到達城市。' },
+            { no: 10, en: 'delivery', zh: '交貨', enEx: 'Deliveries scheduled for today will arrive this afternoon.', zhEx: '預定今天的交貨將於下午送達。' },
+            { no: 11, en: 'distribution', zh: '配送', enEx: 'Goods distributed across branches reduce costs.', zhEx: '分配到各分店的貨品能降低成本。' },
+            { no: 12, en: 'packaging', zh: '包裝', enEx: 'Packaging designed carefully protects fragile items.', zhEx: '精心設計的包裝保護易碎物品。' },
+            { no: 13, en: 'container', zh: '集裝箱', enEx: 'Containers loaded with products left the port.', zhEx: '裝滿產品的集裝箱離開港口。' },
+            { no: 14, en: 'supplier', zh: '供應商', enEx: 'Suppliers providing raw materials are essential.', zhEx: '提供原料的供應商至關重要。' },
+            { no: 15, en: 'vendor', zh: '供應商 / 小販', enEx: 'Vendors selling parts support production.', zhEx: '販售零件的供應商支援生產。' },
+            { no: 16, en: 'retailer', zh: '零售商', enEx: 'Retailers offering discounts attract customers.', zhEx: '提供折扣的零售商吸引顧客。' },
+            { no: 17, en: 'wholesale', zh: '批發', enEx: 'Goods sold wholesale lower the unit cost.', zhEx: '批發銷售的商品降低單價。' },
+            { no: 18, en: 'manufacture', zh: '製造', enEx: 'Products manufactured in this factory meet standards.', zhEx: '在這工廠製造的產品符合標準。' },
+            { no: 19, en: 'factory', zh: '工廠', enEx: 'The factory located near the port reduces transport costs.', zhEx: '位於港口附近的工廠降低運輸成本。' },
+            { no: 20, en: 'assembly', zh: '組裝', enEx: 'The assembly completed yesterday improved efficiency.', zhEx: '昨天完成的組裝提升了效率。' },
+            { no: 21, en: 'production', zh: '生產', enEx: 'Production running smoothly increases profits.', zhEx: '順利進行的生產提高了利潤。' },
+            { no: 22, en: 'quality control', zh: '品管', enEx: 'Quality control performed strictly ensures safety.', zhEx: '嚴格執行的品管確保安全。' },
+            { no: 23, en: 'inspection', zh: '檢查', enEx: 'Inspections carried out regularly prevent defects.', zhEx: '定期進行的檢查避免瑕疵。' },
+            { no: 24, en: 'machinery', zh: '機械', enEx: 'Machinery operated by experts reduces risk.', zhEx: '由專家操作的機械降低風險。' },
+            { no: 25, en: 'equipment', zh: '設備', enEx: 'Equipment maintained properly lasts longer.', zhEx: '妥善維護的設備能使用更久。' },
+            { no: 26, en: 'automation', zh: '自動化', enEx: 'Automation introduced recently increased efficiency.', zhEx: '最近引進的自動化提升了效率。' },
+            { no: 27, en: 'tool', zh: '工具', enEx: 'Tools used in assembly require calibration.', zhEx: '組裝中使用的工具需要校準。' },
+            { no: 28, en: 'resource', zh: '資源', enEx: 'Resources managed effectively reduce waste.', zhEx: '有效管理的資源能減少浪費。' },
+            { no: 29, en: 'material', zh: '材料', enEx: 'Materials delivered late delayed production.', zhEx: '晚到的材料延誤了生產。' },
+            { no: 30, en: 'raw material', zh: '原料', enEx: 'Raw materials imported from abroad are costly.', zhEx: '從國外進口的原料很昂貴。' },
+            { no: 31, en: 'component', zh: '零件', enEx: 'Components produced locally lower costs.', zhEx: '當地生產的零件降低成本。' },
+            { no: 32, en: 'part', zh: '部件', enEx: 'Parts missing from the shipment caused delays.', zhEx: '缺少的部件導致延誤。' },
+            { no: 33, en: 'item', zh: '項目 / 物品', enEx: 'Items listed in the invoice must be checked.', zhEx: '發票列出的項目必須檢查。' },
+            { no: 34, en: 'product', zh: '產品', enEx: 'Products tested before shipping meet quality standards.', zhEx: '出貨前測試的產品符合品質標準。' },
+            { no: 35, en: 'service', zh: '服務', enEx: 'Services provided by the company include repair.', zhEx: '公司提供的服務包含維修。' },
+            { no: 36, en: 'project', zh: '專案', enEx: 'Projects managed well succeed faster.', zhEx: '管理良好的專案成功更快。' },
+            { no: 37, en: 'task', zh: '任務', enEx: 'Tasks assigned clearly improve productivity.', zhEx: '明確分配的任務提升生產力。' },
+            { no: 38, en: 'assignment', zh: '指派的工作', enEx: 'Assignments finished early reduce stress.', zhEx: '提前完成的工作減少壓力。' },
+            { no: 39, en: 'team', zh: '團隊', enEx: 'Teams working together achieve goals faster.', zhEx: '一起合作的團隊更快達成目標。' },
+            { no: 40, en: 'leader', zh: '領導者', enEx: 'Leaders respected by staff inspire motivation.', zhEx: '受員工尊敬的領導者激勵士氣。' },
+            { no: 41, en: 'member', zh: '成員', enEx: 'Members working actively contribute to success.', zhEx: '積極工作的成員對成功有貢獻。' },
+            { no: 42, en: 'staff', zh: '職員', enEx: 'Staff trained regularly provide better service.', zhEx: '定期受訓的職員提供更好的服務。' },
+            { no: 43, en: 'employee', zh: '員工', enEx: 'Employees motivated by bonuses work harder.', zhEx: '被獎金激勵的員工更努力工作。' },
+            { no: 44, en: 'colleague', zh: '同事', enEx: 'Colleagues sharing ideas improve teamwork.', zhEx: '分享想法的同事提升團隊合作。' },
+            { no: 45, en: 'manager', zh: '經理', enEx: 'Managers making quick decisions save time.', zhEx: '做出快速決策的經理節省時間。' },
+            { no: 46, en: 'supervisor', zh: '主管', enEx: 'Supervisors monitoring production ensure quality.', zhEx: '監督生產的主管確保品質。' },
+            { no: 47, en: 'department', zh: '部門', enEx: 'Departments cooperating smoothly reach goals faster.', zhEx: '順利合作的部門更快達成目標。' },
+            { no: 48, en: 'division', zh: '部門 / 分部', enEx: 'Divisions specializing in logistics reduce errors.', zhEx: '專門處理物流的部門減少錯誤。' },
+            { no: 49, en: 'branch', zh: '分公司', enEx: 'Branches located overseas support global sales.', zhEx: '位於海外的分公司支援全球銷售。' },
+            { no: 50, en: 'office', zh: '辦公室', enEx: 'Offices designed efficiently improve productivity.', zhEx: '設計有效率的辦公室提升生產力。' },
+            { no: 51, en: 'company', zh: '公司', enEx: 'Companies expanding abroad face new challenges.', zhEx: '向海外擴展的公司面臨新挑戰。' },
+            { no: 52, en: 'organization', zh: '組織', enEx: 'Organizations adapting quickly stay competitive.', zhEx: '快速調整的組織保持競爭力。' },
+            { no: 53, en: 'enterprise', zh: '企業', enEx: 'Enterprises focusing on innovation grow rapidly.', zhEx: '專注創新的企業快速成長。' },
+            { no: 54, en: 'contract', zh: '合約', enEx: 'Contracts signed electronically save time.', zhEx: '電子簽署的合約節省時間。' },
+            { no: 55, en: 'agreement', zh: '協議', enEx: 'Agreements reached smoothly strengthen partnerships.', zhEx: '順利達成的協議加強合作關係。' },
+            { no: 56, en: 'clause', zh: '條款', enEx: 'Clauses written clearly avoid disputes.', zhEx: '清楚撰寫的條款避免爭議。' },
+            { no: 57, en: 'term', zh: '條件 / 期限', enEx: 'Terms explained well prevent confusion.', zhEx: '解釋清楚的條件避免混淆。' },
+            { no: 58, en: 'condition', zh: '條件', enEx: 'Conditions attached to the contract must be met.', zhEx: '附加在合約上的條件必須遵守。' },
+            { no: 59, en: 'signature', zh: '簽名', enEx: 'Signatures collected electronically ensure speed.', zhEx: '電子收集的簽名確保速度。' },
+            { no: 60, en: 'document', zh: '文件', enEx: 'Documents stored safely prevent data loss.', zhEx: '安全保存的文件避免資料遺失。' },
+            { no: 61, en: 'record', zh: '紀錄', enEx: 'Records kept digitally are easy to access.', zhEx: '以數位保存的紀錄容易存取。' },
+            { no: 62, en: 'report', zh: '報告', enEx: 'Reports submitted on time improve decisions.', zhEx: '準時提交的報告改善決策。' },
+            { no: 63, en: 'file', zh: '檔案', enEx: 'Files organized neatly save search time.', zhEx: '整理整齊的檔案節省搜尋時間。' },
+            { no: 64, en: 'memo', zh: '備忘錄', enEx: 'Memos distributed to staff clarify rules.', zhEx: '發送給員工的備忘錄釐清規則。' },
+            { no: 65, en: 'notice', zh: '通知', enEx: 'Notices posted on the board inform employees.', zhEx: '張貼在佈告欄的通知告知員工。' },
+            { no: 66, en: 'announcement', zh: '公告', enEx: 'Announcements made online spread quickly.', zhEx: '在線發佈的公告迅速傳播。' },
+            { no: 67, en: 'policy', zh: '政策', enEx: 'Policies updated regularly reflect new rules.', zhEx: '定期更新的政策反映新規定。' },
+            { no: 68, en: 'regulation', zh: '規範', enEx: 'Regulations enforced strictly ensure safety.', zhEx: '嚴格執行的規範確保安全。' },
+            { no: 69, en: 'procedure', zh: '程序', enEx: 'Procedures followed carefully reduce risks.', zhEx: '謹慎遵守的程序降低風險。' },
+            { no: 70, en: 'guideline', zh: '指南', enEx: 'Guidelines explained clearly help employees.', zhEx: '清楚解釋的指南幫助員工。' },
+            { no: 71, en: 'instruction', zh: '指示', enEx: 'Instructions given by experts avoid mistakes.', zhEx: '由專家給的指示避免錯誤。' },
+            { no: 72, en: 'plan', zh: '計畫', enEx: 'Plans prepared early ensure smooth execution.', zhEx: '提早準備的計畫確保順利執行。' },
+            { no: 73, en: 'strategy', zh: '策略', enEx: 'Strategies designed effectively improve growth.', zhEx: '有效設計的策略改善成長。' },
+            { no: 74, en: 'objective', zh: '目標', enEx: 'Objectives defined clearly are easier to achieve.', zhEx: '明確定義的目標更容易達成。' },
+            { no: 75, en: 'goal', zh: '目標', enEx: 'Goals set realistically motivate employees.', zhEx: '設定實際的目標激勵員工。' },
+            { no: 76, en: 'target', zh: '目標', enEx: 'Targets reached successfully increase confidence.', zhEx: '成功達到的目標增加信心。' },
+            { no: 77, en: 'solution', zh: '解決方案', enEx: 'Solutions suggested by experts solve problems.', zhEx: '專家提出的解決方案能解決問題。' },
+            { no: 78, en: 'problem', zh: '問題', enEx: 'Problems ignored too long become serious.', zhEx: '被忽視太久的問題會變嚴重。' },
+            { no: 79, en: 'issue', zh: '議題', enEx: 'Issues discussed openly improve trust.', zhEx: '被公開討論的議題改善信任。' },
+            { no: 80, en: 'concern', zh: '關切 / 擔憂', enEx: 'Concerns raised by employees should be addressed.', zhEx: '員工提出的擔憂應該被處理。' },
+            { no: 81, en: 'opportunity', zh: '機會', enEx: 'Opportunities created by new markets drive growth.', zhEx: '新市場創造的機會推動成長。' },
+            { no: 82, en: 'risk', zh: '風險', enEx: 'Risks managed properly reduce losses.', zhEx: '妥善管理的風險降低損失。' },
+            { no: 83, en: 'hazard', zh: '危害', enEx: 'Hazards identified early prevent accidents.', zhEx: '提早發現的危害能防止事故。' },
+            { no: 84, en: 'safety', zh: '安全', enEx: 'Safety maintained strictly protects workers.', zhEx: '嚴格維持的安全保護工人。' },
+            { no: 85, en: 'security', zh: '安全 / 保安', enEx: 'Security strengthened recently deters theft.', zhEx: '最近加強的保安防止竊盜。' },
+            { no: 86, en: 'insurance', zh: '保險', enEx: 'Insurance covering accidents reduces risks.', zhEx: '涵蓋事故的保險降低風險。' },
+            { no: 87, en: 'coverage', zh: '保險範圍', enEx: 'Coverage extended widely protects assets.', zhEx: '擴大的保險範圍保護資產。' },
+            { no: 88, en: 'claim', zh: '理賠', enEx: 'Claims processed quickly satisfy customers.', zhEx: '迅速處理的理賠讓顧客滿意。' },
+            { no: 89, en: 'compensation', zh: '補償', enEx: 'Compensation offered fairly builds trust.', zhEx: '公平提供的補償建立信任。' },
+            { no: 90, en: 'payment', zh: '付款', enEx: 'Payments made online are convenient.', zhEx: '在線進行的付款很方便。' },
+            { no: 91, en: 'refund', zh: '退款', enEx: 'Refunds issued promptly improve reputation.', zhEx: '及時發放的退款改善聲譽。' },
+            { no: 92, en: 'deposit', zh: '存款 / 訂金', enEx: 'Deposits paid in advance confirm bookings.', zhEx: '提前支付的訂金確認預訂。' },
+            { no: 93, en: 'transfer', zh: '轉帳', enEx: 'Transfers handled electronically save time.', zhEx: '電子處理的轉帳節省時間。' },
+            { no: 94, en: 'withdrawal', zh: '提款', enEx: 'Withdrawals made at ATMs are fast.', zhEx: '在提款機進行的提款很快。' },
+            { no: 95, en: 'balance', zh: '餘額', enEx: 'Balances updated automatically ensure accuracy.', zhEx: '自動更新的餘額確保準確性。' },
+            { no: 96, en: 'account', zh: '帳戶', enEx: 'Accounts managed carefully avoid errors.', zhEx: '謹慎管理的帳戶避免錯誤。' },
+            { no: 97, en: 'loan', zh: '貸款', enEx: 'Loans approved quickly support businesses.', zhEx: '快速批准的貸款支援企業。' },
+            { no: 98, en: 'interest', zh: '利息', enEx: 'Interests charged monthly increase costs.', zhEx: '每月收取的利息增加成本。' },
+            { no: 99, en: 'fee', zh: '費用', enEx: 'Fees charged unfairly upset customers.', zhEx: '不公平收取的費用讓顧客不滿。' },
+            { no: 100, en: 'charge', zh: '費用 / 收費', enEx: 'Charges listed clearly prevent disputes.', zhEx: '清楚列出的收費避免爭議。' },
+            { no: 101, en: 'fine', zh: '罰款', enEx: 'Fines imposed strictly enforce rules.', zhEx: '嚴格實施的罰款強化規則。' },
+            { no: 102, en: 'award', zh: '獎項', enEx: 'Awards given annually recognize achievements.', zhEx: '每年頒發的獎項表彰成就。' },
+            { no: 103, en: 'bonus', zh: '獎金', enEx: 'Bonuses offered generously motivate employees.', zhEx: '大方提供的獎金激勵員工。' },
+            { no: 104, en: 'salary', zh: '薪水', enEx: 'Salaries paid fairly retain workers.', zhEx: '公平支付的薪水留住員工。' },
+            { no: 105, en: 'wage', zh: '工資', enEx: 'Wages increased recently improve morale.', zhEx: '最近增加的工資提升士氣。' },
+            { no: 106, en: 'income', zh: '收入', enEx: 'Incomes earned steadily support families.', zhEx: '穩定賺取的收入支撐家庭。' },
+            { no: 107, en: 'expense', zh: '支出', enEx: 'Expenses controlled carefully save money.', zhEx: '謹慎控制的支出節省金錢。' },
+            { no: 108, en: 'cost', zh: '成本', enEx: 'Costs reduced by automation increase profit.', zhEx: '自動化降低的成本增加利潤。' },
+            { no: 109, en: 'profit', zh: '利潤', enEx: 'Profits rising steadily attract investors.', zhEx: '穩定上升的利潤吸引投資人。' },
+            { no: 110, en: 'loss', zh: '損失', enEx: 'Losses caused by delays hurt business.', zhEx: '延誤造成的損失損害業務。' },
+            { no: 111, en: 'forecast', zh: '預測', enEx: 'Forecasts made accurately guide planning.', zhEx: '精準做出的預測指引計畫。' },
+            { no: 112, en: 'estimate', zh: '估算', enEx: 'Estimates calculated carefully improve budgeting.', zhEx: '謹慎計算的估算改善預算。' },
+            { no: 113, en: 'trend', zh: '趨勢', enEx: 'Trends analyzed correctly reveal opportunities.', zhEx: '正確分析的趨勢揭示機會。' },
+            { no: 114, en: 'analysis', zh: '分析', enEx: 'Analyses conducted thoroughly support strategy.', zhEx: '徹底進行的分析支援策略。' },
+            { no: 115, en: 'statistic', zh: '統計數據', enEx: 'Statistics collected regularly show progress.', zhEx: '定期收集的統計數據顯示進展。' },
+            { no: 116, en: 'figure', zh: '數字', enEx: 'Figures presented clearly avoid confusion.', zhEx: '清楚呈現的數字避免混淆。' },
+            { no: 117, en: 'chart', zh: '圖表', enEx: 'Charts created visually explain data well.', zhEx: '視覺化製作的圖表很好解釋數據。' },
+            { no: 118, en: 'graph', zh: '圖表', enEx: 'Graphs showing growth impress investors.', zhEx: '顯示成長的圖表打動投資人。' },
+            { no: 119, en: 'summary', zh: '摘要', enEx: 'Summaries written concisely save time.', zhEx: '簡潔撰寫的摘要節省時間。' },
+            { no: 120, en: 'review', zh: '評估', enEx: 'Reviews given by experts guide improvements.', zhEx: '專家提供的評估指引改進。' },
+            { no: 121, en: 'evaluation', zh: '評估', enEx: 'Evaluations carried out yearly check performance.', zhEx: '每年進行的評估檢查表現。' },
+            { no: 122, en: 'appraisal', zh: '評價', enEx: 'Appraisals done fairly encourage employees.', zhEx: '公平進行的評價鼓勵員工。' },
+            { no: 123, en: 'training', zh: '訓練', enEx: 'Training conducted properly builds skills.', zhEx: '妥善進行的訓練培養技能。' },
+            { no: 124, en: 'seminar', zh: '研討會', enEx: 'Seminars attended by managers share knowledge.', zhEx: '經理參加的研討會分享知識。' },
+            { no: 125, en: 'workshop', zh: '工作坊', enEx: 'Workshops organized well improve learning.', zhEx: '規劃良好的工作坊改善學習。' },
+            { no: 126, en: 'lecture', zh: '演講', enEx: 'Lectures delivered clearly engage audiences.', zhEx: '清楚進行的演講吸引聽眾。' },
+            { no: 127, en: 'presentation', zh: '簡報', enEx: 'Presentations prepared well impress clients.', zhEx: '準備充分的簡報打動客戶。' },
+            { no: 128, en: 'session', zh: '會議 / 場次', enEx: 'Sessions scheduled carefully avoid overlap.', zhEx: '仔細排程的會議避免重疊。' },
+            { no: 129, en: 'participant', zh: '參加者', enEx: 'Participants registered early secure seats.', zhEx: '早註冊的參加者確保座位。' },
+            { no: 130, en: 'attendee', zh: '出席者', enEx: 'Attendees arriving late miss details.', zhEx: '晚到的出席者錯過細節。' },
+            { no: 131, en: 'speaker', zh: '講者', enEx: 'Speakers invited internationally raise prestige.', zhEx: '國際邀請的講者提升聲望。' },
+            { no: 132, en: 'instructor', zh: '講師', enEx: 'Instructors explaining clearly aid learning.', zhEx: '清楚解釋的講師幫助學習。' },
+            { no: 133, en: 'consultant', zh: '顧問', enEx: 'Consultants hired externally bring expertise.', zhEx: '外聘的顧問帶來專業知識。' },
+            { no: 134, en: 'advisor', zh: '顧問', enEx: 'Advisors trusted by clients strengthen ties.', zhEx: '受客戶信任的顧問加強關係。' },
+            { no: 135, en: 'executive', zh: '高階主管', enEx: 'Executives making bold decisions drive growth.', zhEx: '做出大膽決策的高階主管推動成長。' },
+            { no: 136, en: 'administrator', zh: '管理員', enEx: 'Administrators managing systems ensure order.', zhEx: '管理系統的管理員確保秩序。' },
+            { no: 137, en: 'officer', zh: '官員 / 幹部', enEx: 'Officers enforcing rules maintain discipline.', zhEx: '執行規則的官員維持紀律。' },
+            { no: 138, en: 'agent', zh: '代理人', enEx: 'Agents representing firms close deals.', zhEx: '代表公司的代理人完成交易。' },
+            { no: 139, en: 'official', zh: '官員', enEx: 'Officials attending meetings approve policies.', zhEx: '出席會議的官員批准政策。' },
+            { no: 140, en: 'authority', zh: '權威 / 當局', enEx: 'Authorities regulating markets ensure fairness.', zhEx: '管制市場的當局確保公平。' },
+            { no: 141, en: 'leader', zh: '領導者', enEx: 'Leaders guiding effectively inspire trust.', zhEx: '有效指導的領導者激發信任。' },
+            { no: 142, en: 'director', zh: '董事 / 主任', enEx: 'Directors approving budgets control spending.', zhEx: '批准預算的董事控制支出。' },
+            { no: 143, en: 'manager', zh: '經理', enEx: 'Managers handling logistics streamline operations.', zhEx: '處理物流的經理簡化運作。' },
+            { no: 144, en: 'supervisor', zh: '主管', enEx: 'Supervisors guiding workers reduce mistakes.', zhEx: '指導工人的主管減少錯誤。' },
+            { no: 145, en: 'staff', zh: '員工', enEx: 'Staff following rules maintain safety.', zhEx: '遵守規則的員工維持安全。' },
+            { no: 146, en: 'personnel', zh: '人員', enEx: 'Personnel trained overseas bring new skills.', zhEx: '海外受訓的人員帶來新技能。' },
+            { no: 147, en: 'employee', zh: '員工', enEx: 'Employees staying loyal strengthen companies.', zhEx: '忠誠的員工強化公司。' },
+            { no: 148, en: 'colleague', zh: '同事', enEx: 'Colleagues cooperating well achieve goals.', zhEx: '合作良好的同事達成目標。' },
+            { no: 149, en: 'member', zh: '成員', enEx: 'Members contributing ideas improve projects.', zhEx: '提供想法的成員改善專案。' },
+            { no: 150, en: 'headquarters', zh: '總部', enEx: 'Headquarters located in the capital manage branches.', zhEx: '位於首都的總部管理分公司。' }
+        ];
+
+        // Utilities
+        function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[b[i], b[j]] = [b[j], b[i]] } return b }
+
+        // State
+        let deck = shuffle(VOCAB.slice());
+        let idx = 0;
+        let flipped = false;
+        let autoplay = false;
+        let timer = null;
+
+        // Elements
+        const cardEl = document.getElementById('card');
+        const wordEl = document.getElementById('word');
+        const exEl = document.getElementById('ex');
+        const zhEl = document.getElementById('zh');
+        const zhExEl = document.getElementById('zhEx');
+        const metaFront = document.getElementById('metaFront');
+        const counter = document.getElementById('counter');
+        const previewGrid = document.getElementById('previewGrid');
+        const intervalInput = document.getElementById('interval');
+        const autoBtn = document.getElementById('autoBtn');
+        const exportBtn = document.getElementById('exportBtn');
+
+        function render() {
+            const c = deck[idx];
+            wordEl.textContent = c.en;
+            exEl.textContent = c.enEx;
+            zhEl.textContent = c.zh;
+            zhExEl.textContent = c.zhEx;
+            metaFront.textContent = 'No. ' + c.no;
+            counter.textContent = `卡片 ${idx + 1} / ${deck.length}`;
+            cardEl.classList.toggle('flipped', flipped);
+
+            // speakWord(c.en);            
+        }
+
+        function nextCard() { idx = (idx + 1) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function prevCard() { idx = (idx - 1 + deck.length) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function randomCard() { idx = Math.floor(Math.random() * deck.length); flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function reshuffle() { deck = shuffle(deck); idx = 0; flipped = false; render(); buildPreview(); }
+
+        function startAuto() { autoplay = true; autoBtn.textContent = '停止自動'; timer = setInterval(() => { nextCard(); }, Math.max(500, Number(intervalInput.value) || 2000)); }
+        function stopAuto() { autoplay = false; autoBtn.textContent = '開始自動'; clearInterval(timer); timer = null; }
+        function toggleAuto() { if (autoplay) stopAuto(); else startAuto(); }
+
+        // Events
+        document.getElementById('shuffleBtn').addEventListener('click', () => { reshuffle(); });
+        document.getElementById('randomBtn').addEventListener('click', () => { randomCard(); });
+        document.getElementById('nextBtn').addEventListener('click', () => { nextCard(); });
+        document.getElementById('prevBtn').addEventListener('click', () => { prevCard(); });
+        document.getElementById('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
+        autoBtn.addEventListener('click', () => { toggleAuto(); });
+        exportBtn.addEventListener('click', () => { exportCSV(); });
+
+        cardEl.addEventListener('click', () => { flipped = !flipped; render(); });
+        cardEl.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+        });
+
+        intervalInput.addEventListener('change', () => { if (autoplay) { stopAuto(); startAuto(); } });
+
+        // Build preview grid
+        function buildPreview() {
+            previewGrid.innerHTML = ''; deck.forEach((d, i) => {
+                const btn = document.createElement('button'); btn.className = 'chip'; btn.textContent = d.no + '. ' + d.en; btn.addEventListener('click', () => { idx = i; flipped = false; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }); previewGrid.appendChild(btn);
+            })
+        }
+
+        // Export current deck to CSV
+        function exportCSV() {
+            const rows = [['No', 'Vocabulary', 'Chinese', 'Example (EN)', '例句 (中)']];
+            deck.forEach(d => rows.push([d.no, d.en, d.zh, d.enEx, d.zhEx]));
+            const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'Day1_Flashcards_1-150.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        }
+
+        // Init
+        render(); buildPreview();
+
+        // Global keyboard navigation when card not focused
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement === cardEl) return;
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+        });
+
+        const speakBtn = document.getElementById('speakBtn');
+
+        function speakWord(word) {
+            if (!window.speechSynthesis) return;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US'; // 英文發音
+            window.speechSynthesis.cancel(); // 先停止前一個發音
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 點擊按鈕發音
+
+        speakBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
+            speakWord(deck[idx].en);
+        });
+
+    </script>
+
+</body>
+
+</html>
