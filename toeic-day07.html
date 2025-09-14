@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Day 7 — 綜合 — Flashcards (1–900)</title>
+    <style>
+        :root {
+            --bg: #f0f8f0;
+            --card: #ffffff;
+            --muted: #4a5d43;
+            --accent: #2e4b2e;
+            --shadow: rgba(46, 75, 46, 0.2);
+            --border: #a3c9a3;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
+            margin: 0;
+            background: var(--bg) url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat;
+            /* 木質紋理 */
+            color: var(--accent);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 18px
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-family: 'Georgia', serif;
+            color: var(--accent);
+        }
+
+        p.lead {
+            margin: 6px 0 18px;
+            color: var(--muted)
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            box-shadow: 2px 2px 5px var(--shadow);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .card-area {
+            perspective: 1200px
+        }
+
+        .card {
+            width: 100%;
+            height: 360px;
+            border-radius: 16px;
+            background: var(--card);
+            box-shadow: 0 8px 20px var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 450ms cubic-bezier(.2, .8, .2, 1);
+            border: 2px solid var(--border);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg)
+        }
+
+        .face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 26px;
+            backface-visibility: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        .front {
+            font-weight: 700
+        }
+
+        .front .word {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .front .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+            text-align: center
+        }
+
+        .back .zh {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .back .ex {
+            color: var(--muted);
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .meta {
+            position: absolute;
+            left: 14px;
+            top: 12px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .preview {
+            margin-top: 14px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px
+        }
+
+        .chip {
+            background: #eaf4ea;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 1px 1px 4px var(--shadow);
+            font-family: 'Georgia', serif;
+        }
+
+        .footer {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        input[type=number] {
+            width: 100px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Georgia', serif;
+        }
+
+        @media (max-width:640px) {
+            .card {
+                height: 260px
+            }
+
+            .front .word {
+                font-size: 34px
+            }
+
+            .back .zh {
+                font-size: 24px
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Day 7 — 綜合 — Flashcards (1–900)</h1>
+        </header>
+
+        <div class="controls">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button class="btn" id="shuffleBtn">洗牌</button>
+                <button class="btn" id="randomBtn">隨機</button>
+                <button class="btn" id="autoBtn">開始自動</button>
+                <button class="btn" id="exportBtn">匯出當前卡片清單 (CSV)</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="meta" id="counter">卡片 1 / 150</div>
+            </div>
+        </div>
+
+        <div class="card-area">
+            <div class="card" id="card" tabindex="0" aria-label="Flashcard">
+                <div class="face front">
+                    <div class="meta" id="metaFront">No. 1</div>
+                    <div class="word" id="word">office</div>
+                    <button id="speakBtn" class="btn" style="margin-top:8px;padding:4px 8px;font-size:14px;">🔊 發音</button>
+                    <div class="ex" id="ex">She works in a big office in Taipei.</div>
+                </div>
+                <div class="face back">
+                    <div class="meta">&nbsp;</div>
+                    <div class="zh" id="zh">辦公室</div>
+                    <div class="ex" id="zhEx">她在台北的一間大辦公室工作。</div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:12px">
+            <div class="nav">
+                <button class="btn" id="prevBtn">上一張</button>
+                <button class="btn" id="nextBtn">下一張</button>
+                <button class="btn" id="flipBtn">翻面</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px">
+                <label style="font-size:13px;color:var(--muted)">間隔(ms):</label>
+                <input type="number" id="interval" value="4000" min="500" />
+            </div>
+        </div>
+
+        <section class="preview">
+            <h3 style="margin:10px 0 8px">快速預覽（點選跳至該字）</h3>
+            <div class="grid" id="previewGrid"></div>
+        </section>
+
+        <div class="footer">Tip: Space – 翻面 · ← → – 前/後 · 若要列印，請使用瀏覽器列印功能。</div>
+    </div>
+
+    <script>
+        // Full 1–150 vocabulary
+        const VOCAB = [
+            { no: 1, en: 'office', zh: '辦公室', enEx: 'She works in a big office in Taipei.', zhEx: '她在台北的一間大辦公室工作。' },
+            { no: 2, en: 'colleague', zh: '同事', enEx: 'My colleague helped me with the report.', zhEx: '我的同事幫我完成報告。' },
+            { no: 3, en: 'supervisor', zh: '主管', enEx: 'The supervisor approved the new plan.', zhEx: '主管批准了新計畫。' },
+            { no: 4, en: 'schedule', zh: '行程 / 時程表', enEx: 'I have a busy schedule this week.', zhEx: '我這週行程很滿。' },
+            { no: 5, en: 'deadline', zh: '截止日期', enEx: 'The project deadline is next Monday.', zhEx: '專案的截止日期是下週一。' },
+            { no: 6, en: 'submit', zh: '提交', enEx: 'Please submit your report by Friday.', zhEx: '請在星期五前提交你的報告。' },
+            { no: 7, en: 'approve', zh: '批准', enEx: 'The manager approved my leave request.', zhEx: '經理批准了我的請假申請。' },
+            { no: 8, en: 'reject', zh: '拒絕', enEx: 'His proposal was rejected by the team.', zhEx: '他的提案被團隊拒絕了。' },
+            { no: 9, en: 'equipment', zh: '設備', enEx: 'The office bought new computer equipment.', zhEx: '辦公室購買了新的電腦設備。' },
+            { no: 10, en: 'stationery', zh: '文具', enEx: 'We need more stationery for the office.', zhEx: '我們辦公室需要更多文具。' },
+            { no: 11, en: 'printer', zh: '印表機', enEx: 'The printer is out of paper.', zhEx: '印表機沒紙了。' },
+            { no: 12, en: 'meeting', zh: '會議', enEx: 'There will be a meeting at 10 a.m.', zhEx: '上午 10 點有會議。' },
+            { no: 13, en: 'agenda', zh: '議程', enEx: 'The agenda was sent by email.', zhEx: '議程已透過電子郵件發送。' },
+            { no: 14, en: 'presentation', zh: '簡報', enEx: 'She gave a great presentation yesterday.', zhEx: '她昨天做了一個很棒的簡報。' },
+            { no: 15, en: 'memo', zh: '備忘錄', enEx: 'The memo was posted on the board.', zhEx: '備忘錄張貼在布告欄上。' },
+            { no: 16, en: 'report', zh: '報告', enEx: 'He is writing the monthly report.', zhEx: '他正在撰寫月報。' },
+            { no: 17, en: 'budget', zh: '預算', enEx: 'The budget for this project is limited.', zhEx: '這個專案的預算有限。' },
+            { no: 18, en: 'profit', zh: '利潤', enEx: 'The company made a high profit last year.', zhEx: '公司去年獲得高額利潤。' },
+            { no: 19, en: 'loss', zh: '損失', enEx: 'The business suffered a big loss.', zhEx: '公司遭受了巨大損失。' },
+            { no: 20, en: 'invoice', zh: '發票', enEx: 'The invoice must be paid within 30 days.', zhEx: '發票必須在 30 天內支付。' },
+            { no: 21, en: 'contract', zh: '合約', enEx: 'They signed the contract yesterday.', zhEx: '他們昨天簽署了合約。' },
+            { no: 22, en: 'department', zh: '部門', enEx: 'She works in the sales department.', zhEx: '她在業務部門工作。' },
+            { no: 23, en: 'manager', zh: '經理', enEx: 'The manager is very strict.', zhEx: '這位經理很嚴格。' },
+            { no: 24, en: 'employee', zh: '員工', enEx: 'The company has 500 employees.', zhEx: '這家公司有 500 名員工。' },
+            { no: 25, en: 'recruit', zh: '招募', enEx: 'They want to recruit new engineers.', zhEx: '他們想招募新的工程師。' },
+            { no: 26, en: 'hire', zh: '雇用', enEx: 'The firm hired five new staff members.', zhEx: '公司雇用了五名新員工。' },
+            { no: 27, en: 'resign', zh: '辭職', enEx: 'She decided to resign from her job.', zhEx: '她決定辭去工作。' },
+            { no: 28, en: 'promote', zh: '升遷', enEx: 'He was promoted to team leader.', zhEx: '他被升遷為組長。' },
+            { no: 29, en: 'training', zh: '訓練', enEx: 'New employees must attend training.', zhEx: '新員工必須參加訓練。' },
+            { no: 30, en: 'policy', zh: '政策', enEx: 'The company has a strict safety policy.', zhEx: '公司有嚴格的安全政策。' },
+            { no: 31, en: 'regulation', zh: '規定', enEx: 'All staff must follow the regulations.', zhEx: '所有員工必須遵守規定。' },
+            { no: 32, en: 'announcement', zh: '公告', enEx: 'The announcement was made yesterday.', zhEx: '公告於昨天發佈。' },
+            { no: 33, en: 'feedback', zh: '回饋', enEx: 'We received positive feedback from clients.', zhEx: '我們收到客戶的正面回饋。' },
+            { no: 34, en: 'review', zh: '評估 / 審查', enEx: 'The manager is reviewing the report.', zhEx: '經理正在審查報告。' },
+            { no: 35, en: 'survey', zh: '調查', enEx: 'The survey shows customer satisfaction.', zhEx: '調查顯示客戶的滿意度。' },
+            { no: 36, en: 'data', zh: '資料', enEx: 'The data was analyzed carefully.', zhEx: '資料已被仔細分析。' },
+            { no: 37, en: 'record', zh: '記錄', enEx: 'The record is kept in the system.', zhEx: '記錄保存在系統中。' },
+            { no: 38, en: 'update', zh: '更新', enEx: 'The system will update automatically.', zhEx: '系統將自動更新。' },
+            { no: 39, en: 'file', zh: '檔案', enEx: 'I saved the file on the desktop.', zhEx: '我把檔案存到桌面上。' },
+            { no: 40, en: 'archive', zh: '檔案庫 / 歸檔', enEx: 'Old documents are stored in the archive.', zhEx: '舊文件被存放在檔案庫裡。' },
+            { no: 41, en: 'access', zh: '存取', enEx: 'Only managers can access this file.', zhEx: '只有經理可以存取這個檔案。' },
+            { no: 42, en: 'password', zh: '密碼', enEx: 'Please reset your password regularly.', zhEx: '請定期重設密碼。' },
+            { no: 43, en: 'secure', zh: '安全的', enEx: 'This website is not secure.', zhEx: '這個網站不安全。' },
+            { no: 44, en: 'maintenance', zh: '維護', enEx: 'The system is under maintenance.', zhEx: '系統正在維護中。' },
+            { no: 45, en: 'operation', zh: '操作 / 運作', enEx: 'The machine stopped operation suddenly.', zhEx: '機器突然停止運作。' },
+            { no: 46, en: 'task', zh: '任務', enEx: 'I finished my task on time.', zhEx: '我準時完成了任務。' },
+            { no: 47, en: 'assignment', zh: '作業 / 指派工作', enEx: 'The teacher gave us an assignment.', zhEx: '老師給了我們一份作業。' },
+            { no: 48, en: 'conference', zh: '會議', enEx: 'The international conference starts tomorrow.', zhEx: '國際會議明天開始。' },
+            { no: 49, en: 'seminar', zh: '研討會', enEx: 'She attended a seminar on AI.', zhEx: '她參加了一場關於人工智慧的研討會。' },
+            { no: 50, en: 'workstation', zh: '工作站', enEx: 'Each employee has a personal workstation.', zhEx: '每位員工都有自己的工作站。' },
+            { no: 51, en: 'notice', zh: '通知', enEx: 'A notice was posted on the bulletin board.', zhEx: '布告欄上張貼了一則通知。' },
+            { no: 52, en: 'guideline', zh: '指南', enEx: 'Follow the company’s safety guidelines.', zhEx: '請遵守公司的安全指南。' },
+            { no: 53, en: 'procedure', zh: '程序', enEx: 'The hiring procedure takes two weeks.', zhEx: '招聘程序需要兩週時間。' },
+            { no: 54, en: 'requirement', zh: '要求', enEx: 'This job has high skill requirements.', zhEx: '這份工作對技能的要求很高。' },
+            { no: 55, en: 'objective', zh: '目標', enEx: 'Our main objective is to increase sales.', zhEx: '我們的主要目標是提升銷售。' },
+            { no: 56, en: 'goal', zh: '目標', enEx: 'She achieved her career goals.', zhEx: '她達成了自己的職業目標。' },
+            { no: 57, en: 'project', zh: '專案', enEx: 'The project will finish next month.', zhEx: '這個專案將在下個月完成。' },
+            { no: 58, en: 'team', zh: '團隊', enEx: 'Our team works well together.', zhEx: '我們的團隊合作得很好。' },
+            { no: 59, en: 'leader', zh: '領導者', enEx: 'He is a natural leader.', zhEx: '他是天生的領導者。' },
+            { no: 60, en: 'member', zh: '成員', enEx: 'Each member has a different task.', zhEx: '每位成員都有不同的任務。' },
+            { no: 61, en: 'staff', zh: '員工 / 人員', enEx: 'The hotel staff are very friendly.', zhEx: '這家飯店的員工非常友善。' },
+            { no: 62, en: 'human resources', zh: '人力資源', enEx: 'Human resources handles recruitment.', zhEx: '人資部門負責招募工作。' },
+            { no: 63, en: 'payroll', zh: '薪資名單', enEx: 'Payroll is processed every month.', zhEx: '薪資名單每月處理一次。' },
+            { no: 64, en: 'salary', zh: '薪水', enEx: 'His monthly salary is $3,000.', zhEx: '他的月薪是 3000 美元。' },
+            { no: 65, en: 'bonus', zh: '獎金', enEx: 'Employees get a bonus at the end of the year.', zhEx: '員工在年底會拿到獎金。' },
+            { no: 66, en: 'raise', zh: '加薪', enEx: 'She asked for a raise last month.', zhEx: '她上個月要求加薪。' },
+            { no: 67, en: 'performance', zh: '表現', enEx: 'His performance was excellent.', zhEx: '他的表現非常優秀。' },
+            { no: 68, en: 'evaluation', zh: '評估', enEx: 'The evaluation will take place tomorrow.', zhEx: '評估將於明天進行。' },
+            { no: 69, en: 'appraisal', zh: '評價', enEx: 'The annual appraisal is important for promotions.', zhEx: '年度評價對升遷很重要。' },
+            { no: 70, en: 'benefit', zh: '福利', enEx: 'Health insurance is one of the benefits.', zhEx: '健康保險是其中一項福利。' },
+            { no: 71, en: 'insurance', zh: '保險', enEx: 'The company provides life insurance.', zhEx: '公司提供人壽保險。' },
+            { no: 72, en: 'leave', zh: '假期 / 請假', enEx: 'She is on maternity leave.', zhEx: '她正在休產假。' },
+            { no: 73, en: 'vacation', zh: '假期', enEx: 'We are planning a summer vacation.', zhEx: '我們正在計劃暑假旅行。' },
+            { no: 74, en: 'absence', zh: '缺席', enEx: 'His absence affected the meeting.', zhEx: '他的缺席影響了會議。' },
+            { no: 75, en: 'attendance', zh: '出席', enEx: 'Attendance at the workshop was high.', zhEx: '研討會的出席率很高。' },
+            { no: 76, en: 'punctuality', zh: '準時', enEx: 'Punctuality is important in the workplace.', zhEx: '在職場上準時很重要。' },
+            { no: 77, en: 'discipline', zh: '紀律', enEx: 'The school has strict discipline rules.', zhEx: '學校有嚴格的紀律規範。' },
+            { no: 78, en: 'responsibility', zh: '責任', enEx: 'Parents have responsibility for their children.', zhEx: '父母對孩子有責任。' },
+            { no: 79, en: 'duty', zh: '職責', enEx: 'It is your duty to complete the task.', zhEx: '完成任務是你的職責。' },
+            { no: 80, en: 'obligation', zh: '義務', enEx: 'Citizens have an obligation to pay taxes.', zhEx: '公民有繳稅的義務。' },
+            { no: 81, en: 'decision', zh: '決定', enEx: 'The final decision was made by the CEO.', zhEx: '最終決定由執行長做出。' },
+            { no: 82, en: 'plan', zh: '計畫', enEx: 'We need a plan for the new product launch.', zhEx: '我們需要一個新產品發表的計畫。' },
+            { no: 83, en: 'strategy', zh: '策略', enEx: 'Their marketing strategy was successful.', zhEx: '他們的行銷策略很成功。' },
+            { no: 84, en: 'analysis', zh: '分析', enEx: 'The analysis showed good results.', zhEx: '分析顯示出良好的結果。' },
+            { no: 85, en: 'summary', zh: '摘要', enEx: 'The report begins with a summary.', zhEx: '報告以摘要開頭。' },
+            { no: 86, en: 'chart', zh: '圖表', enEx: 'The chart shows sales growth.', zhEx: '圖表顯示銷售成長。' },
+            { no: 87, en: 'graph', zh: '圖形', enEx: 'The graph illustrates the trend.', zhEx: '圖形顯示了趨勢。' },
+            { no: 88, en: 'statistic', zh: '統計數據', enEx: 'The statistic is based on surveys.', zhEx: '這項統計數據來自調查。' },
+            { no: 89, en: 'figure', zh: '數字 / 人物', enEx: 'The sales figures are increasing.', zhEx: '銷售數字正在上升。' },
+            { no: 90, en: 'trend', zh: '趨勢', enEx: 'The fashion trend changes quickly.', zhEx: '流行趨勢變化很快。' },
+            { no: 91, en: 'forecast', zh: '預測', enEx: 'The weather forecast says it will rain.', zhEx: '天氣預測說會下雨。' },
+            { no: 92, en: 'estimate', zh: '估計', enEx: 'The cost estimate was too low.', zhEx: '成本估計太低了。' },
+            { no: 93, en: 'result', zh: '結果', enEx: 'The result of the test was positive.', zhEx: '測試結果是正面的。' },
+            { no: 94, en: 'outcome', zh: '結果 / 成果', enEx: 'The outcome of the meeting was successful.', zhEx: '會議的成果很成功。' },
+            { no: 95, en: 'solution', zh: '解決方案', enEx: 'We found a solution to the problem.', zhEx: '我們找到了解決問題的方法。' },
+            { no: 96, en: 'problem', zh: '問題', enEx: 'There is a problem with the system.', zhEx: '系統出現了一個問題。' },
+            { no: 97, en: 'issue', zh: '議題 / 問題', enEx: 'Environmental issues are important.', zhEx: '環境議題很重要。' },
+            { no: 98, en: 'concern', zh: '關心 / 擔憂', enEx: 'His main concern is safety.', zhEx: '他最擔心的是安全。' },
+            { no: 99, en: 'risk', zh: '風險', enEx: 'Smoking increases the risk of cancer.', zhEx: '吸菸會增加癌症風險。' },
+            { no: 100, en: 'opportunity', zh: '機會', enEx: 'This job is a great opportunity for me.', zhEx: '這份工作對我來說是個好機會。' },
+            { no: 101, en: 'resource', zh: '資源', enEx: 'Time is an important resource.', zhEx: '時間是一項重要的資源。' },
+            { no: 102, en: 'tool', zh: '工具', enEx: 'This software is a useful tool.', zhEx: '這款軟體是一個有用的工具。' },
+            { no: 103, en: 'software', zh: '軟體', enEx: 'The company develops new software.', zhEx: '公司開發新軟體。' },
+            { no: 104, en: 'hardware', zh: '硬體', enEx: 'The computer hardware was upgraded.', zhEx: '電腦硬體已經升級。' },
+            { no: 105, en: 'database', zh: '資料庫', enEx: 'All information is stored in the database.', zhEx: '所有資訊都儲存在資料庫中。' },
+            { no: 106, en: 'system', zh: '系統', enEx: 'The system is easy to use.', zhEx: '這個系統很容易使用。' },
+            { no: 107, en: 'network', zh: '網路', enEx: 'The office network is very secure.', zhEx: '辦公室網路非常安全。' },
+            { no: 108, en: 'communication', zh: '溝通', enEx: 'Good communication is key to teamwork.', zhEx: '良好的溝通是團隊合作的關鍵。' },
+            { no: 109, en: 'email', zh: '電子郵件', enEx: 'I received an email from my boss.', zhEx: '我收到主管的電子郵件。' },
+            { no: 110, en: 'phone', zh: '電話', enEx: 'She answered the phone quickly.', zhEx: '她很快就接起電話。' },
+            { no: 111, en: 'message', zh: '訊息', enEx: 'He sent me a text message.', zhEx: '他傳給我一則簡訊。' },
+            { no: 112, en: 'call', zh: '打電話', enEx: 'I will call you after the meeting.', zhEx: '我會在會議後打給你。' },
+            { no: 113, en: 'notification', zh: '通知', enEx: 'I got a notification on my phone.', zhEx: '我手機收到一則通知。' },
+            { no: 114, en: 'discussion', zh: '討論', enEx: 'We had a long discussion about the plan.', zhEx: '我們針對這個計畫進行了長時間的討論。' },
+            { no: 115, en: 'consultation', zh: '諮詢', enEx: 'The company offers free consultation.', zhEx: '公司提供免費諮詢。' },
+            { no: 116, en: 'negotiation', zh: '談判', enEx: 'The negotiation took three hours.', zhEx: '談判持續了三個小時。' },
+            { no: 117, en: 'agreement', zh: '協議', enEx: 'They reached an agreement yesterday.', zhEx: '他們昨天達成協議。' },
+            { no: 118, en: 'clause', zh: '條款', enEx: 'Please read the contract clauses carefully.', zhEx: '請仔細閱讀合約條款。' },
+            { no: 119, en: 'term', zh: '條件 / 期限', enEx: 'The loan term is five years.', zhEx: '這筆貸款的期限是五年。' },
+            { no: 120, en: 'condition', zh: '條件', enEx: 'The working conditions are good.', zhEx: '工作條件很好。' },
+            { no: 121, en: 'signature', zh: '簽名', enEx: 'The contract needs your signature.', zhEx: '合約需要你的簽名。' },
+            { no: 122, en: 'document', zh: '文件', enEx: 'Please upload the required document.', zhEx: '請上傳所需的文件。' },
+            { no: 123, en: 'log', zh: '紀錄', enEx: 'The system keeps a log of activities.', zhEx: '系統會保留活動紀錄。' },
+            { no: 124, en: 'note', zh: '筆記', enEx: 'I wrote a note during the lecture.', zhEx: '我在講座中做了筆記。' },
+            { no: 125, en: 'memorandum (memo)', zh: '備忘錄', enEx: 'He wrote a memorandum for the staff.', zhEx: '他寫了一份備忘錄給員工。' },
+            { no: 126, en: 'minutes', zh: '會議記錄', enEx: 'The secretary prepared the meeting minutes.', zhEx: '秘書準備了會議記錄。' },
+            { no: 127, en: 'workshop', zh: '工作坊', enEx: 'I attended a writing workshop.', zhEx: '我參加了一個寫作工作坊。' },
+            { no: 128, en: 'lecture', zh: '講座', enEx: 'The professor gave an interesting lecture.', zhEx: '教授進行了一場有趣的講座。' },
+            { no: 129, en: 'explanation', zh: '解釋', enEx: 'His explanation was very clear.', zhEx: '他的解釋非常清楚。' },
+            { no: 130, en: 'instruction', zh: '指示 / 說明', enEx: 'Please follow the instructions carefully.', zhEx: '請仔細遵循指示。' },
+            { no: 131, en: 'guidance', zh: '指導', enEx: 'She gave me guidance on the project.', zhEx: '她在專案上給了我指導。' },
+            { no: 132, en: 'assistance', zh: '協助', enEx: 'Thank you for your assistance.', zhEx: '謝謝你的協助。' },
+            { no: 133, en: 'support', zh: '支持', enEx: 'The company offers technical support.', zhEx: '公司提供技術支援。' },
+            { no: 134, en: 'help', zh: '幫助', enEx: 'Can you help me with this task?', zhEx: '你能幫我完成這個任務嗎？' },
+            { no: 135, en: 'service', zh: '服務', enEx: 'The hotel provides excellent service.', zhEx: '這間飯店提供優質的服務。' },
+            { no: 136, en: 'division', zh: '部門 / 分部', enEx: 'He works in the research division.', zhEx: '他在研究部門工作。' },
+            { no: 137, en: 'section', zh: '部門 / 區域', enEx: 'The library has a science section.', zhEx: '圖書館有科學區。' },
+            { no: 138, en: 'branch', zh: '分行 / 分部', enEx: 'The bank has a branch in Taichung.', zhEx: '這家銀行在台中有分行。' },
+            { no: 139, en: 'headquarters', zh: '總部', enEx: 'The company’s headquarters is in New York.', zhEx: '公司的總部在紐約。' },
+            { no: 140, en: 'company', zh: '公司', enEx: 'She works for a large company.', zhEx: '她在一家大公司工作。' },
+            { no: 141, en: 'corporation', zh: '大公司 / 法人組織', enEx: 'The corporation expanded overseas.', zhEx: '這家公司拓展到海外。' },
+            { no: 142, en: 'firm', zh: '公司 (尤指律師 / 會計)', enEx: 'He works at a law firm.', zhEx: '他在一家律師事務所工作。' },
+            { no: 143, en: 'organization', zh: '組織', enEx: 'The non-profit organization helps children.', zhEx: '這個非營利組織幫助兒童。' },
+            { no: 144, en: 'enterprise', zh: '企業', enEx: 'The small enterprise grew rapidly.', zhEx: '這家小企業快速成長。' },
+            { no: 145, en: 'management', zh: '管理', enEx: 'Good management improves efficiency.', zhEx: '良好的管理能提升效率。' },
+            { no: 146, en: 'administration', zh: '行政', enEx: 'She works in the administration office.', zhEx: '她在行政辦公室工作。' },
+            { no: 147, en: 'leadership', zh: '領導力', enEx: 'His leadership skills are excellent.', zhEx: '他的領導能力非常優秀。' },
+            { no: 148, en: 'personnel', zh: '人事 / 員工', enEx: 'The personnel department hired new staff.', zhEx: '人事部門雇用了新員工。' },
+            { no: 149, en: 'employee', zh: '員工', enEx: 'The company values its employees.', zhEx: '公司重視員工。' },
+            { no: 150, en: 'colleague', zh: '同事', enEx: 'I had lunch with my colleague.', zhEx: '我和同事一起吃午餐。' },
+            { no: 1, en: 'airport', zh: '機場', enEx: 'I arrived at the airport two hours early.', zhEx: '我提前兩小時到達機場。' },
+            { no: 2, en: 'flight', zh: '航班', enEx: 'Our flight was delayed due to weather.', zhEx: '因天氣原因，我們的航班延誤了。' },
+            { no: 3, en: 'boarding', zh: '登機', enEx: 'Boarding will start in 20 minutes.', zhEx: '登機將在 20 分鐘後開始。' },
+            { no: 4, en: 'delay', zh: '延誤', enEx: 'The train is delayed by 30 minutes.', zhEx: '火車延誤了 30 分鐘。' },
+            { no: 5, en: 'cancellation', zh: '取消', enEx: 'Flight cancellation was announced this morning.', zhEx: '航班取消於今早公告。' },
+            { no: 6, en: 'reservation', zh: '預訂', enEx: 'I made a hotel reservation online.', zhEx: '我在網上預訂了飯店。' },
+            { no: 7, en: 'itinerary', zh: '行程表', enEx: 'The travel agent sent us the itinerary.', zhEx: '旅行社寄給我們行程表。' },
+            { no: 8, en: 'baggage', zh: '行李', enEx: 'Your baggage will be checked at the counter.', zhEx: '你的行李會在櫃檯檢查。' },
+            { no: 9, en: 'luggage', zh: '行李', enEx: 'He lost his luggage during the trip.', zhEx: '他在旅途中丟失了行李。' },
+            { no: 10, en: 'customs', zh: '海關', enEx: 'We went through customs quickly.', zhEx: '我們很快通過了海關。' },
+            { no: 11, en: 'passport', zh: '護照', enEx: 'Don’t forget your passport.', zhEx: '別忘了帶護照。' },
+            { no: 12, en: 'visa', zh: '簽證', enEx: 'You need a visa to enter the country.', zhEx: '進入該國需要簽證。' },
+            { no: 13, en: 'ticket', zh: '票', enEx: 'I bought a train ticket online.', zhEx: '我在網上買了火車票。' },
+            { no: 14, en: 'gate', zh: '登機口', enEx: 'The flight departs from gate 5.', zhEx: '航班從 5 號登機口出發。' },
+            { no: 15, en: 'terminal', zh: '航廈', enEx: 'The airport terminal is very crowded.', zhEx: '機場航廈非常擁擠。' },
+            { no: 16, en: 'security', zh: '安全檢查', enEx: 'Please remove liquids at security.', zhEx: '請在安檢時取出液體。' },
+            { no: 17, en: 'check-in', zh: '辦理登機 / 入住', enEx: 'We completed hotel check-in quickly.', zhEx: '我們很快完成了飯店入住手續。' },
+            { no: 18, en: 'lounge', zh: '休息室', enEx: 'The VIP lounge is comfortable.', zhEx: '貴賓休息室很舒適。' },
+            { no: 19, en: 'seat', zh: '座位', enEx: 'My seat is by the window.', zhEx: '我的座位靠窗。' },
+            { no: 20, en: 'aisle', zh: '走道', enEx: 'I prefer an aisle seat.', zhEx: '我比較喜歡靠走道的座位。' },
+            { no: 21, en: 'window', zh: '窗戶 / 窗邊座位', enEx: 'The window view is beautiful.', zhEx: '窗外的景色很美。' },
+            { no: 22, en: 'schedule', zh: '時間表', enEx: 'Check the train schedule before you leave.', zhEx: '出發前確認火車時刻表。' },
+            { no: 23, en: 'timetable', zh: '時刻表', enEx: 'The bus timetable is posted at the station.', zhEx: '公車時刻表張貼在車站。' },
+            { no: 24, en: 'departure', zh: '出發', enEx: 'Our departure is scheduled at 9 a.m.', zhEx: '我們的出發時間定於上午 9 點。' },
+            { no: 25, en: 'arrival', zh: '抵達', enEx: 'The arrival was delayed due to traffic.', zhEx: '因交通原因抵達延誤。' },
+            { no: 26, en: 'platform', zh: '月台', enEx: 'The train leaves from platform 3.', zhEx: '火車從 3 號月台出發。' },
+            { no: 27, en: 'shuttle', zh: '接駁車', enEx: 'Take the shuttle to the hotel.', zhEx: '搭接駁車去飯店。' },
+            { no: 28, en: 'transport', zh: '交通 / 運輸', enEx: 'Public transport is convenient here.', zhEx: '這裡的公共交通很方便。' },
+            { no: 29, en: 'taxi', zh: '計程車', enEx: 'We took a taxi to the airport.', zhEx: '我們搭計程車去機場。' },
+            { no: 30, en: 'bus', zh: '公車', enEx: 'The bus arrives every 10 minutes.', zhEx: '公車每 10 分鐘一班。' },
+            { no: 31, en: 'train', zh: '火車', enEx: 'The train is very fast.', zhEx: '火車非常快。' },
+            { no: 32, en: 'car rental', zh: '汽車租賃', enEx: 'We booked a car rental online.', zhEx: '我們在網上預訂了租車服務。' },
+            { no: 33, en: 'hotel', zh: '飯店', enEx: 'The hotel is near the city center.', zhEx: '飯店在市中心附近。' },
+            { no: 34, en: 'check-in', zh: '入住登記', enEx: 'Hotel check-in starts at 3 p.m.', zhEx: '飯店入住登記從下午 3 點開始。' },
+            { no: 35, en: 'check-out', zh: '退房', enEx: 'Check-out is at noon.', zhEx: '退房時間是中午。' },
+            { no: 36, en: 'room', zh: '房間', enEx: 'Our room has a nice view.', zhEx: '我們的房間景色很好。' },
+            { no: 37, en: 'key', zh: '鑰匙', enEx: 'The receptionist gave us the room key.', zhEx: '接待員給了我們房間鑰匙。' },
+            { no: 38, en: 'reception', zh: '櫃檯', enEx: 'The reception is on the first floor.', zhEx: '櫃檯在一樓。' },
+            { no: 39, en: 'concierge', zh: '服務台', enEx: 'The concierge helped us book a taxi.', zhEx: '服務台幫我們叫了計程車。' },
+            { no: 40, en: 'service', zh: '服務', enEx: 'The hotel service was excellent.', zhEx: '飯店服務非常好。' },
+            { no: 41, en: 'facility', zh: '設施', enEx: 'The gym facility is open 24 hours.', zhEx: '健身設施全天開放。' },
+            { no: 42, en: 'amenity', zh: '設施 / 便利設備', enEx: 'The hotel amenities include a pool and spa.', zhEx: '飯店設施包括游泳池和 SPA。' },
+            { no: 43, en: 'conference', zh: '會議', enEx: 'We attended an international conference.', zhEx: '我們參加了一場國際會議。' },
+            { no: 44, en: 'seminar', zh: '研討會', enEx: 'The seminar focused on marketing.', zhEx: '研討會聚焦於行銷。' },
+            { no: 45, en: 'workshop', zh: '工作坊', enEx: 'The workshop was very interactive.', zhEx: '工作坊互動性很高。' },
+            { no: 46, en: 'session', zh: '課程 / 會議場次', enEx: 'The morning session starts at 9 a.m.', zhEx: '上午課程從 9 點開始。' },
+            { no: 47, en: 'participant', zh: '參與者', enEx: 'Each participant received a certificate.', zhEx: '每位參與者都拿到證書。' },
+            { no: 48, en: 'attendee', zh: '出席者', enEx: 'There were 200 attendees at the seminar.', zhEx: '研討會有 200 名出席者。' },
+            { no: 49, en: 'register', zh: '登記', enEx: 'Please register for the event online.', zhEx: '請在線上登記活動。' },
+            { no: 50, en: 'enrollment', zh: '註冊 / 報名', enEx: 'Enrollment for the workshop closes tomorrow.', zhEx: '工作坊報名明天截止。' },
+            { no: 51, en: 'speaker', zh: '講者', enEx: 'The speaker shared his travel experiences.', zhEx: '講者分享了他的旅行經驗。' },
+            { no: 52, en: 'presenter', zh: '發表者', enEx: 'The presenter explained the project details.', zhEx: '發表者解釋了專案細節。' },
+            { no: 53, en: 'microphone', zh: '麥克風', enEx: 'The microphone was not working properly.', zhEx: '麥克風運作不正常。' },
+            { no: 54, en: 'projector', zh: '投影機', enEx: 'The projector displayed the slides clearly.', zhEx: '投影機清楚地顯示投影片。' },
+            { no: 55, en: 'presentation', zh: '簡報', enEx: 'Her presentation impressed everyone.', zhEx: '她的簡報給大家留下深刻印象。' },
+            { no: 56, en: 'slide', zh: '投影片', enEx: 'Each slide contains important information.', zhEx: '每張投影片都有重要資訊。' },
+            { no: 57, en: 'material', zh: '資料 / 材料', enEx: 'Please prepare the material before the workshop.', zhEx: '請在工作坊前準備好資料。' },
+            { no: 58, en: 'handout', zh: '講義', enEx: 'The handout was given to all participants.', zhEx: '講義發給所有參與者。' },
+            { no: 59, en: 'agenda', zh: '議程', enEx: 'The agenda includes three discussion topics.', zhEx: '議程包含三個討論議題。' },
+            { no: 60, en: 'topic', zh: '主題', enEx: 'The topic of the seminar was leadership.', zhEx: '研討會的主題是領導力。' },
+            { no: 61, en: 'discussion', zh: '討論', enEx: 'The discussion lasted for two hours.', zhEx: '討論持續了兩個小時。' },
+            { no: 62, en: 'debate', zh: '辯論', enEx: 'There was a debate about environmental policies.', zhEx: '有關環境政策的辯論進行中。' },
+            { no: 63, en: 'question', zh: '問題', enEx: 'She asked a question during the seminar.', zhEx: '她在研討會上提出了一個問題。' },
+            { no: 64, en: 'answer', zh: '答案', enEx: 'The speaker answered all questions patiently.', zhEx: '講者耐心回答所有問題。' },
+            { no: 65, en: 'feedback', zh: '回饋', enEx: 'Participants provided feedback after the session.', zhEx: '參加者在課程後提供回饋。' },
+            { no: 66, en: 'evaluation', zh: '評估', enEx: 'The evaluation form is mandatory.', zhEx: '評估表是必填的。' },
+            { no: 67, en: 'certificate', zh: '證書', enEx: 'Each attendee received a certificate.', zhEx: '每位出席者都收到證書。' },
+            { no: 68, en: 'award', zh: '獎項', enEx: 'She won an award for best presentation.', zhEx: '她因最佳簡報獲獎。' },
+            { no: 69, en: 'networking', zh: '聯誼 / 社交', enEx: 'Networking helps build professional connections.', zhEx: '聯誼有助於建立職業關係。' },
+            { no: 70, en: 'break', zh: '休息', enEx: 'Let’s take a short coffee break.', zhEx: '我們休息一下喝咖啡。' },
+            { no: 71, en: 'refreshment', zh: '點心 / 茶點', enEx: 'Refreshments are available in the lounge.', zhEx: '茶點在休息室提供。' },
+            { no: 72, en: 'lunch', zh: '午餐', enEx: 'Lunch will be served at 12 p.m.', zhEx: '午餐將於中午 12 點供應。' },
+            { no: 73, en: 'dinner', zh: '晚餐', enEx: 'Dinner is included in the package.', zhEx: '套餐包含晚餐。' },
+            { no: 74, en: 'coffee', zh: '咖啡', enEx: 'Would you like some coffee?', zhEx: '你想喝點咖啡嗎？' },
+            { no: 75, en: 'tea', zh: '茶', enEx: 'She prefers green tea.', zhEx: '她比較喜歡喝綠茶。' },
+            { no: 76, en: 'snack', zh: '小吃 / 點心', enEx: 'Snacks are provided during the break.', zhEx: '休息時提供點心。' },
+            { no: 77, en: 'accommodation', zh: '住宿', enEx: 'Accommodation is arranged for all participants.', zhEx: '為所有參加者安排了住宿。' },
+            { no: 78, en: 'travel', zh: '旅行', enEx: 'We love to travel during holidays.', zhEx: '我們喜歡在假期旅行。' },
+            { no: 79, en: 'tour', zh: '旅遊 / 觀光行程', enEx: 'The guided tour starts at 10 a.m.', zhEx: '導覽行程從上午 10 點開始。' },
+            { no: 80, en: 'sightseeing', zh: '觀光', enEx: 'We spent the day sightseeing in Paris.', zhEx: '我們在巴黎觀光了一整天。' },
+            { no: 81, en: 'attraction', zh: '景點', enEx: 'The Eiffel Tower is a famous attraction.', zhEx: '艾菲爾鐵塔是著名景點。' },
+            { no: 82, en: 'map', zh: '地圖', enEx: 'Use the map to find the hotel.', zhEx: '用地圖找飯店。' },
+            { no: 83, en: 'guide', zh: '導遊 / 指南', enEx: 'The guide explained the history of the city.', zhEx: '導遊解釋了這座城市的歷史。' },
+            { no: 84, en: 'itinerary', zh: '行程表', enEx: 'Check your itinerary for the next day.', zhEx: '查看你隔天的行程表。' },
+            { no: 85, en: 'plan', zh: '計畫', enEx: 'We need a plan for the trip.', zhEx: '我們需要一個旅行計畫。' },
+            { no: 86, en: 'schedule', zh: '行程 / 時間表', enEx: 'The schedule is tight but manageable.', zhEx: '行程很緊湊，但可安排。' },
+            { no: 87, en: 'excursion', zh: '短途旅行', enEx: 'The school organized a weekend excursion.', zhEx: '學校組織了一次週末短途旅行。' },
+            { no: 88, en: 'trip', zh: '旅行', enEx: 'Our trip to Japan was amazing.', zhEx: '我們的日本旅行非常棒。' },
+            { no: 89, en: 'journey', zh: '旅程', enEx: 'The journey took five hours by train.', zhEx: '這段旅程搭火車花了五個小時。' },
+            { no: 90, en: 'adventure', zh: '冒險', enEx: 'Hiking in the mountains was an adventure.', zhEx: '在山上健行是一種冒險。' },
+            { no: 91, en: 'vacation', zh: '假期', enEx: 'We are planning a summer vacation.', zhEx: '我們正在計劃暑假旅行。' },
+            { no: 92, en: 'holiday', zh: '假期', enEx: 'They went on a holiday to Europe.', zhEx: '他們去歐洲度假。' },
+            { no: 93, en: 'leave', zh: '請假 / 假期', enEx: 'He applied for leave next week.', zhEx: '他申請下週請假。' },
+            { no: 94, en: 'permit', zh: '許可證', enEx: 'A work permit is required for foreigners.', zhEx: '外國人需要工作許可證。' },
+            { no: 95, en: 'document', zh: '文件', enEx: 'Please bring all necessary documents.', zhEx: '請攜帶所有必要文件。' },
+            { no: 96, en: 'form', zh: '表格', enEx: 'Fill out this form before checking in.', zhEx: '辦理入住前請填寫這張表格。' },
+            { no: 97, en: 'application', zh: '申請', enEx: 'I submitted my visa application online.', zhEx: '我在網上提交了簽證申請。' },
+            { no: 98, en: 'request', zh: '請求', enEx: 'She made a special request for the hotel room.', zhEx: '她對飯店房間提出了特別請求。' },
+            { no: 99, en: 'approval', zh: '批准', enEx: 'The manager gave approval for the project.', zhEx: '經理批准了這個專案。' },
+            { no: 100, en: 'policy', zh: '政策', enEx: 'The company has a strict cancellation policy.', zhEx: '公司有嚴格的取消政策。' },
+            { no: 101, en: 'rule', zh: '規則', enEx: 'All participants must follow the rules.', zhEx: '所有參加者必須遵守規則。' },
+            { no: 102, en: 'regulation', zh: '規定', enEx: 'Safety regulations are strictly enforced.', zhEx: '安全規定受到嚴格執行。' },
+            { no: 103, en: 'safety', zh: '安全', enEx: 'Safety is our top priority.', zhEx: '安全是我們的首要任務。' },
+            { no: 104, en: 'emergency', zh: '緊急情況', enEx: 'Call this number in case of emergency.', zhEx: '發生緊急情況請撥打這個號碼。' },
+            { no: 105, en: 'instruction', zh: '指示', enEx: 'Follow the instructions carefully.', zhEx: '請仔細遵循指示。' },
+            { no: 106, en: 'guideline', zh: '指南', enEx: 'The guidelines explain the procedure.', zhEx: '指南說明了程序。' },
+            { no: 107, en: 'procedure', zh: '程序', enEx: 'The procedure is simple and efficient.', zhEx: '程序簡單且有效率。' },
+            { no: 108, en: 'requirement', zh: '要求', enEx: 'Meeting the requirement is essential.', zhEx: '達到要求是必須的。' },
+            { no: 109, en: 'objective', zh: '目標', enEx: 'The objective of this session is clear.', zhEx: '本課程的目標很明確。' },
+            { no: 110, en: 'goal', zh: '目標', enEx: 'Setting a goal helps you stay focused.', zhEx: '設定目標幫助你保持專注。' },
+            { no: 111, en: 'target', zh: '目標 / 指標', enEx: 'The sales target must be achieved.', zhEx: '銷售目標必須達成。' },
+            { no: 112, en: 'strategy', zh: '策略', enEx: 'We need a strategy to win the contract.', zhEx: '我們需要策略來贏得合約。' },
+            { no: 113, en: 'plan', zh: '計畫', enEx: 'The project plan was approved.', zhEx: '專案計畫已獲批准。' },
+            { no: 114, en: 'project', zh: '專案', enEx: 'The team completed the project on time.', zhEx: '團隊準時完成專案。' },
+            { no: 115, en: 'team', zh: '團隊', enEx: 'A good team works efficiently.', zhEx: '好的團隊工作效率高。' },
+            { no: 116, en: 'leader', zh: '領導者', enEx: 'The team leader guided everyone.', zhEx: '團隊領導者指導大家。' },
+            { no: 117, en: 'member', zh: '成員', enEx: 'Each member contributed to the success.', zhEx: '每位成員都為成功做出貢獻。' },
+            { no: 118, en: 'staff', zh: '員工', enEx: 'The staff handled customer inquiries well.', zhEx: '員工很好地處理了客戶諮詢。' },
+            { no: 119, en: 'personnel', zh: '人事 / 員工', enEx: 'Personnel management is important.', zhEx: '人事管理很重要。' },
+            { no: 120, en: 'employee', zh: '員工', enEx: 'Employees must follow company policies.', zhEx: '員工必須遵守公司政策。' },
+            { no: 121, en: 'colleague', zh: '同事', enEx: 'I discussed the plan with my colleague.', zhEx: '我和同事討論了計畫。' },
+            { no: 122, en: 'manager', zh: '經理', enEx: 'The manager approved the budget.', zhEx: '經理批准了預算。' },
+            { no: 123, en: 'supervisor', zh: '主管', enEx: 'The supervisor gave constructive feedback.', zhEx: '主管給了建設性的回饋。' },
+            { no: 124, en: 'decision', zh: '決定', enEx: 'Making the right decision is crucial.', zhEx: '做出正確決定至關重要。' },
+            { no: 125, en: 'solution', zh: '解決方案', enEx: 'We found a solution to the technical problem.', zhEx: '我們找到了技術問題的解決方案。' },
+            { no: 126, en: 'problem', zh: '問題', enEx: 'The main problem is lack of resources.', zhEx: '主要問題是資源不足。' },
+            { no: 127, en: 'issue', zh: '議題 / 問題', enEx: 'This issue needs immediate attention.', zhEx: '這個議題需要立即處理。' },
+            { no: 128, en: 'risk', zh: '風險', enEx: 'Every investment carries a risk.', zhEx: '每項投資都有風險。' },
+            { no: 129, en: 'opportunity', zh: '機會', enEx: 'Traveling abroad is a great opportunity.', zhEx: '出國旅行是一個很好的機會。' },
+            { no: 130, en: 'resource', zh: '資源', enEx: 'Human resources are valuable assets.', zhEx: '人力資源是寶貴資產。' },
+            { no: 131, en: 'tool', zh: '工具', enEx: 'Online tools help improve productivity.', zhEx: '在線工具有助於提升效率。' },
+            { no: 132, en: 'equipment', zh: '設備', enEx: 'Safety equipment must be used at all times.', zhEx: '必須隨時使用安全設備。' },
+            { no: 133, en: 'software', zh: '軟體', enEx: 'The new software improves workflow.', zhEx: '新軟體改善了工作流程。' },
+            { no: 134, en: 'hardware', zh: '硬體', enEx: 'Upgrading hardware can speed up the system.', zhEx: '升級硬體可以加快系統速度。' },
+            { no: 135, en: 'database', zh: '資料庫', enEx: 'The database stores customer information.', zhEx: '資料庫儲存客戶資訊。' },
+            { no: 136, en: 'system', zh: '系統', enEx: 'The booking system is easy to use.', zhEx: '訂票系統很容易使用。' },
+            { no: 137, en: 'network', zh: '網路', enEx: 'The office network is secure.', zhEx: '辦公室網路很安全。' },
+            { no: 138, en: 'communication', zh: '溝通', enEx: 'Clear communication prevents misunderstandings.', zhEx: '清楚的溝通可避免誤會。' },
+            { no: 139, en: 'email', zh: '電子郵件', enEx: 'I sent the email yesterday.', zhEx: '我昨天發送了電子郵件。' },
+            { no: 140, en: 'phone', zh: '電話', enEx: 'The manager called me on the phone.', zhEx: '經理打電話給我。' },
+            { no: 141, en: 'message', zh: '訊息', enEx: 'I received a message from my colleague.', zhEx: '我收到同事的訊息。' },
+            { no: 142, en: 'boarding', zh: '登機', enEx: 'Boarding will begin shortly.', zhEx: '登機即將開始。' },
+            { no: 143, en: 'flight', zh: '航班', enEx: 'The flight was canceled due to weather.', zhEx: '因天氣原因，航班被取消。' },
+            { no: 144, en: 'check-in', zh: '辦理登機 / 入住', enEx: 'Please check-in two hours before the flight.', zhEx: '請在航班前兩小時辦理登機。' },
+            { no: 145, en: 'reservation', zh: '預訂', enEx: 'I confirmed the hotel reservation.', zhEx: '我確認了飯店預訂。' },
+            { no: 146, en: 'schedule', zh: '行程 / 時間表', enEx: 'The schedule is packed with activities.', zhEx: '行程安排得滿滿的。' },
+            { no: 147, en: 'transport', zh: '交通 / 運輸', enEx: 'Public transport is convenient here.', zhEx: '這裡的公共交通很方便。' },
+            { no: 148, en: 'taxi', zh: '計程車', enEx: 'We took a taxi to the airport.', zhEx: '我們搭計程車去機場。' },
+            { no: 149, en: 'bus', zh: '公車', enEx: 'The bus arrives every 15 minutes.', zhEx: '公車每 15 分鐘一班。' },
+            { no: 150, en: 'train', zh: '火車', enEx: 'The train to the city center is fast.', zhEx: '去市中心的火車很快。' },
+           { no: 1, en: 'revenue', zh: '收入', enEx: "The company's revenue increased this year.", zhEx: '公司的收入今年增加了。' },
+            { no: 2, en: 'expense', zh: '支出', enEx: 'Travel expenses must be reported.', zhEx: '差旅支出必須報告。' },
+            { no: 3, en: 'cost', zh: '成本', enEx: 'The cost of production is rising.', zhEx: '生產成本正在上升。' },
+            { no: 4, en: 'price', zh: '價格', enEx: 'The price of the product is affordable.', zhEx: '這個產品的價格很合理。' },
+            { no: 5, en: 'payment', zh: '付款', enEx: 'Payment is due by the end of the month.', zhEx: '付款截止到月底。' },
+            { no: 6, en: 'deposit', zh: '存款 / 訂金', enEx: 'I made a deposit at the bank.', zhEx: '我在銀行存了一筆款。' },
+            { no: 7, en: 'withdraw', zh: '提款', enEx: 'She withdrew money from the ATM.', zhEx: '她從提款機提了錢。' },
+            { no: 8, en: 'transfer', zh: '轉帳 / 調動', enEx: 'I transferred funds to my savings account.', zhEx: '我把資金轉到我的儲蓄帳戶。' },
+            { no: 9, en: 'balance', zh: '餘額', enEx: 'Check your account balance regularly.', zhEx: '定期查看帳戶餘額。' },
+            { no: 10, en: 'account', zh: '帳戶', enEx: 'He opened a new bank account.', zhEx: '他開了一個新的銀行帳戶。' },
+            { no: 11, en: 'loan', zh: '貸款', enEx: 'The bank approved my loan application.', zhEx: '銀行批准了我的貸款申請。' },
+            { no: 12, en: 'interest', zh: '利息', enEx: 'The interest rate is 3% per year.', zhEx: '年利率是 3%。' },
+            { no: 13, en: 'tax', zh: '稅', enEx: 'Taxes must be filed annually.', zhEx: '稅務必須每年申報。' },
+            { no: 14, en: 'refund', zh: '退費', enEx: 'I requested a refund for the defective product.', zhEx: '我要求退還有缺陷產品的費用。' },
+            { no: 15, en: 'budget', zh: '預算', enEx: 'We need to plan the budget carefully.', zhEx: '我們需要仔細規劃預算。' },
+            { no: 16, en: 'campaign', zh: '活動 / 行銷活動', enEx: 'The marketing campaign was successful.', zhEx: '行銷活動很成功。' },
+            { no: 17, en: 'advertisement', zh: '廣告', enEx: 'The advertisement attracted many customers.', zhEx: '廣告吸引了許多顧客。' },
+            { no: 18, en: 'commercial', zh: '商業廣告', enEx: 'The new commercial is very popular.', zhEx: '新的商業廣告很受歡迎。' },
+            { no: 19, en: 'slogan', zh: '標語 / 廣告口號', enEx: 'The company created a catchy slogan.', zhEx: '公司創造了一個吸引人的口號。' },
+            { no: 20, en: 'brand', zh: '品牌', enEx: 'Nike is a famous brand worldwide.', zhEx: 'Nike 是全球知名品牌。' },
+            { no: 21, en: 'logo', zh: '標誌', enEx: "The company's logo is on every product.", zhEx: '公司的標誌出現在每個產品上。' },
+            { no: 22, en: 'promotion', zh: '促銷 / 升遷', enEx: 'The store has a summer promotion.', zhEx: '商店有夏季促銷活動。' },
+            { no: 23, en: 'strategy', zh: '策略', enEx: 'The marketing strategy worked well.', zhEx: '行銷策略運作得很好。' },
+            { no: 24, en: 'discount', zh: '折扣', enEx: 'The shop offers a 10% discount.', zhEx: '商店提供 10% 的折扣。' },
+            { no: 25, en: 'coupon', zh: '優惠券', enEx: 'I used a coupon to save money.', zhEx: '我用優惠券省錢。' },
+            { no: 26, en: 'customer', zh: '顧客', enEx: 'The store values its customers.', zhEx: '商店重視顧客。' },
+            { no: 27, en: 'client', zh: '客戶', enEx: 'The client requested a detailed report.', zhEx: '客戶要求詳細報告。' },
+            { no: 28, en: 'consumer', zh: '消費者', enEx: 'Consumers prefer eco-friendly products.', zhEx: '消費者偏好環保產品。' },
+            { no: 29, en: 'feedback', zh: '反饋 / 回饋', enEx: 'Customer feedback is important.', zhEx: '顧客反饋很重要。' },
+            { no: 30, en: 'survey', zh: '調查', enEx: 'The company conducted a customer survey.', zhEx: '公司進行了顧客調查。' },
+            { no: 31, en: 'trend', zh: '趨勢', enEx: 'The market trend shows growth.', zhEx: '市場趨勢顯示成長。' },
+            { no: 32, en: 'demand', zh: '需求', enEx: 'There is high demand for electric cars.', zhEx: '電動車需求很高。' },
+            { no: 33, en: 'supply', zh: '供應', enEx: 'The supply of goods is limited.', zhEx: '商品供應有限。' },
+            { no: 34, en: 'market', zh: '市場', enEx: 'The company entered a new market.', zhEx: '公司進入了一個新市場。' },
+            { no: 35, en: 'competitor', zh: '競爭者', enEx: 'Competitors are launching similar products.', zhEx: '競爭者推出了類似產品。' },
+            { no: 36, en: 'product', zh: '產品', enEx: 'The product is made from recycled materials.', zhEx: '產品由回收材料製成。' },
+            { no: 37, en: 'service', zh: '服務', enEx: 'Customer service is very helpful.', zhEx: '顧客服務非常有幫助。' },
+            { no: 38, en: 'sale', zh: '銷售 / 特價', enEx: 'The store has a big sale this week.', zhEx: '商店本週有大促銷。' },
+            { no: 39, en: 'offer', zh: '提供 / 優惠', enEx: 'They made a special offer to attract customers.', zhEx: '他們提出特別優惠吸引顧客。' },
+            { no: 40, en: 'purchase', zh: '購買', enEx: 'I purchased a new laptop yesterday.', zhEx: '我昨天買了一台新筆電。' },
+            { no: 41, en: 'order', zh: '訂單', enEx: 'We received an order for 100 units.', zhEx: '我們收到 100 件產品的訂單。' },
+            { no: 42, en: 'delivery', zh: '交付 / 運送', enEx: 'Delivery will arrive tomorrow.', zhEx: '運送將於明天到達。' },
+            { no: 43, en: 'shipment', zh: '裝運 / 出貨', enEx: 'The shipment was delayed due to weather.', zhEx: '由於天氣原因，出貨延誤。' },
+            { no: 44, en: 'return', zh: '退貨', enEx: 'The customer requested a return.', zhEx: '顧客要求退貨。' },
+            { no: 45, en: 'exchange', zh: '交換 / 換貨', enEx: 'The store allows product exchange within 7 days.', zhEx: '商店允許七天內換貨。' },
+            { no: 46, en: 'warranty', zh: '保固', enEx: 'The product comes with a one-year warranty.', zhEx: '產品有一年保固。' },
+            { no: 47, en: 'guarantee', zh: '保證', enEx: 'The company guarantees satisfaction.', zhEx: '公司保證滿意度。' },
+            { no: 48, en: 'insurance', zh: '保險', enEx: 'Travel insurance is recommended.', zhEx: '建議購買旅遊保險。' },
+            { no: 49, en: 'policy', zh: '保險條款 / 政策', enEx: 'Check the insurance policy carefully.', zhEx: '仔細查看保險條款。' },
+            { no: 50, en: 'claim', zh: '理賠 / 索賠', enEx: 'She filed a claim after the accident.', zhEx: '她在事故後提出理賠申請。' },
+            { no: 51, en: 'compensation', zh: '補償 / 賠償', enEx: 'Employees received compensation for overtime work.', zhEx: '員工因加班獲得補償。' },
+            { no: 52, en: 'liability', zh: '責任 / 義務', enEx: 'The company has liability for any damages.', zhEx: '公司對任何損害負有責任。' },
+            { no: 53, en: 'risk', zh: '風險', enEx: 'Investing in stocks carries risk.', zhEx: '投資股票有風險。' },
+            { no: 54, en: 'legal', zh: '法律的', enEx: 'They sought legal advice.', zhEx: '他們尋求法律建議。' },
+            { no: 55, en: 'contract', zh: '合約', enEx: 'The contract was signed yesterday.', zhEx: '合約昨天簽署了。' },
+            { no: 56, en: 'agreement', zh: '協議', enEx: 'The two companies reached an agreement.', zhEx: '兩家公司達成協議。' },
+            { no: 57, en: 'clause', zh: '條款', enEx: 'The contract includes a confidentiality clause.', zhEx: '合約包含保密條款。' },
+            { no: 58, en: 'term', zh: '期限 / 條件', enEx: 'The lease term is one year.', zhEx: '租約期限為一年。' },
+            { no: 59, en: 'condition', zh: '條件', enEx: 'The sale is subject to certain conditions.', zhEx: '這筆交易受特定條件限制。' },
+            { no: 60, en: 'signature', zh: '簽名', enEx: 'Please provide your signature here.', zhEx: '請在這裡簽名。' },
+            { no: 61, en: 'document', zh: '文件', enEx: 'Keep all important documents safe.', zhEx: '保存所有重要文件。' },
+            { no: 62, en: 'form', zh: '表格', enEx: 'Fill out the registration form.', zhEx: '填寫註冊表格。' },
+            { no: 63, en: 'requirement', zh: '要求', enEx: 'Meeting the requirements is mandatory.', zhEx: '達到要求是必須的。' },
+            { no: 64, en: 'obligation', zh: '義務', enEx: 'Employees have an obligation to follow rules.', zhEx: '員工有遵守規則的義務。' },
+            { no: 65, en: 'rule', zh: '規則', enEx: 'Company rules must be respected.', zhEx: '公司規則必須遵守。' },
+            { no: 66, en: 'regulation', zh: '規定', enEx: 'Tax regulations are strict.', zhEx: '稅務規定很嚴格。' },
+            { no: 67, en: 'procedure', zh: '程序', enEx: 'Follow the procedure carefully.', zhEx: '仔細遵循程序。' },
+            { no: 68, en: 'guideline', zh: '指南', enEx: 'Guidelines help standardize processes.', zhEx: '指南有助於標準化流程。' },
+            { no: 69, en: 'instruction', zh: '指示', enEx: 'Follow the instructions step by step.', zhEx: '一步一步遵循指示。' },
+            { no: 70, en: 'objective', zh: '目標', enEx: 'The objective is to increase sales.', zhEx: '目標是提高銷售。' },
+            { no: 71, en: 'goal', zh: '目標', enEx: 'Setting goals helps improve performance.', zhEx: '設定目標有助於提升績效。' },
+            { no: 72, en: 'target', zh: '目標', enEx: 'Our sales target is 1 million dollars.', zhEx: '我們的銷售目標是一百萬美元。' },
+            { no: 73, en: 'plan', zh: '計畫', enEx: 'The marketing plan was successful.', zhEx: '行銷計畫很成功。' },
+            { no: 74, en: 'strategy', zh: '策略', enEx: 'The advertising strategy worked well.', zhEx: '廣告策略運作得很好。' },
+            { no: 75, en: 'analysis', zh: '分析', enEx: 'Market analysis is essential before launching.', zhEx: '推出前市場分析很重要。' },
+            { no: 76, en: 'report', zh: '報告', enEx: 'The finance report was submitted on time.', zhEx: '財務報告按時提交。' },
+            { no: 77, en: 'summary', zh: '摘要', enEx: 'Please read the executive summary.', zhEx: '請閱讀執行摘要。' },
+            { no: 78, en: 'chart', zh: '圖表', enEx: 'The chart shows sales growth.', zhEx: '圖表顯示銷售增長。' },
+            { no: 79, en: 'graph', zh: '圖表', enEx: 'The graph illustrates market trends.', zhEx: '圖表說明市場趨勢。' },
+            { no: 80, en: 'figure', zh: '數字 / 圖表', enEx: 'The figures indicate profit increase.', zhEx: '數字顯示利潤增加。' },
+            { no: 81, en: 'statistic', zh: '統計數據', enEx: 'Statistics show customer satisfaction levels.', zhEx: '統計顯示顧客滿意度。' },
+            { no: 82, en: 'result', zh: '結果', enEx: 'The campaign results were impressive.', zhEx: '活動結果令人印象深刻。' },
+            { no: 83, en: 'outcome', zh: '結果', enEx: 'The outcome of the negotiation was positive.', zhEx: '談判結果是正面的。' },
+            { no: 84, en: 'solution', zh: '解決方案', enEx: 'We found a solution to the budget issue.', zhEx: '我們找到了預算問題的解決方案。' },
+            { no: 85, en: 'problem', zh: '問題', enEx: 'The main problem is low sales.', zhEx: '主要問題是銷售低迷。' },
+            { no: 86, en: 'issue', zh: '議題 / 問題', enEx: 'Customer complaints are a serious issue.', zhEx: '顧客投訴是一個嚴重問題。' },
+            { no: 87, en: 'concern', zh: '擔憂 / 關切', enEx: 'Environmental concerns are increasing.', zhEx: '環境問題引起關注。' },
+            { no: 88, en: 'opportunity', zh: '機會', enEx: 'This project offers great opportunity.', zhEx: '這個專案提供了很好的機會。' },
+            { no: 89, en: 'resource', zh: '資源', enEx: 'Human resources are key to success.', zhEx: '人力資源是成功的關鍵。' },
+            { no: 90, en: 'tool', zh: '工具', enEx: 'Analytical tools help make decisions.', zhEx: '分析工具有助於做出決策。' },
+            { no: 91, en: 'system', zh: '系統', enEx: 'The accounting system was upgraded.', zhEx: '會計系統已升級。' },
+            { no: 92, en: 'software', zh: '軟體', enEx: 'The software is user-friendly.', zhEx: '這個軟體使用者友好。' },
+            { no: 93, en: 'hardware', zh: '硬體', enEx: 'The hardware needs maintenance.', zhEx: '硬體需要維護。' },
+            { no: 94, en: 'device', zh: '裝置', enEx: 'The device was malfunctioning.', zhEx: '這個裝置故障了。' },
+            { no: 95, en: 'technology', zh: '科技', enEx: 'New technology improves efficiency.', zhEx: '新科技提高效率。' },
+            { no: 96, en: 'innovation', zh: '創新', enEx: 'Innovation drives company growth.', zhEx: '創新推動公司成長。' },
+            { no: 97, en: 'development', zh: '發展', enEx: 'Product development takes time.', zhEx: '產品開發需要時間。' },
+            { no: 98, en: 'project', zh: '專案', enEx: 'The project deadline is next month.', zhEx: '專案截止日期是下個月。' },
+            { no: 99, en: 'task', zh: '任務', enEx: 'Complete your tasks on time.', zhEx: '按時完成你的任務。' },
+            { no: 100, en: 'assignment', zh: '指派 / 作業', enEx: 'I received a new assignment from my manager.', zhEx: '我從經理那裡收到一個新任務。' },
+
+            { no: 101, en: 'memo', zh: '備忘錄', enEx: 'I sent a memo to all staff.', zhEx: '我發送了一份備忘錄給所有員工。' },
+            { no: 102, en: 'announcement', zh: '公告 / 宣布', enEx: 'The company made an important announcement.', zhEx: '公司發布了一個重要公告。' },
+            { no: 103, en: 'update', zh: '更新', enEx: 'Please provide an update on the project.', zhEx: '請提供專案的最新進展。' },
+            { no: 104, en: 'record', zh: '記錄', enEx: 'Keep a record of all transactions.', zhEx: '保存所有交易記錄。' },
+            { no: 105, en: 'file', zh: '檔案', enEx: 'Store the documents in a secure file.', zhEx: '將文件存放在安全的檔案中。' },
+            { no: 106, en: 'archive', zh: '存檔', enEx: 'Old reports are archived annually.', zhEx: '舊報告每年存檔。' },
+            { no: 107, en: 'note', zh: '筆記 / 記錄', enEx: 'Take notes during the meeting.', zhEx: '會議中做筆記。' },
+            { no: 108, en: 'minutes', zh: '會議紀錄', enEx: 'The minutes of the meeting were circulated.', zhEx: '會議紀錄已分發。' },
+            { no: 109, en: 'agenda', zh: '議程', enEx: 'The agenda lists all discussion topics.', zhEx: '議程列出所有討論議題。' },
+            { no: 110, en: 'meeting', zh: '會議', enEx: 'The team meeting starts at 10 a.m.', zhEx: '團隊會議上午十點開始。' },
+            { no: 111, en: 'discussion', zh: '討論', enEx: 'We had a discussion about marketing strategies.', zhEx: '我們討論了行銷策略。' },
+            { no: 112, en: 'consultation', zh: '諮詢', enEx: 'He scheduled a consultation with the lawyer.', zhEx: '他安排了與律師的諮詢。' },
+            { no: 113, en: 'negotiation', zh: '談判', enEx: 'The negotiation took several hours.', zhEx: '談判花了好幾個小時。' },
+            { no: 114, en: 'certificate', zh: '證書', enEx: 'She received a certificate for completing the course.', zhEx: '她完成課程後獲得證書。' },
+            { no: 115, en: 'award', zh: '獎項', enEx: 'He won an award for outstanding performance.', zhEx: '他因出色表現獲獎。' },
+            { no: 116, en: 'recognition', zh: '認可 / 表揚', enEx: 'Employee recognition boosts morale.', zhEx: '員工表揚提升士氣。' },
+            { no: 117, en: 'training', zh: '培訓', enEx: 'Staff training is scheduled for next week.', zhEx: '員工培訓安排在下週。' },
+            { no: 118, en: 'seminar', zh: '研討會', enEx: 'The seminar covered financial planning.', zhEx: '研討會涵蓋財務規劃。' },
+            { no: 119, en: 'workshop', zh: '工作坊', enEx: 'The workshop focused on marketing skills.', zhEx: '工作坊專注於行銷技能。' },
+            { no: 120, en: 'session', zh: '課程 / 時段', enEx: 'The training session lasted two hours.', zhEx: '培訓課程持續兩小時。' },
+            { no: 121, en: 'lecture', zh: '演講 / 講座', enEx: 'The lecture was about investment strategies.', zhEx: '演講內容是關於投資策略。' },
+            { no: 122, en: 'presentation', zh: '簡報', enEx: 'He gave a presentation on the new product.', zhEx: '他做了有關新產品的簡報。' },
+            { no: 123, en: 'speaker', zh: '講者', enEx: 'The speaker discussed market trends.', zhEx: '講者討論市場趨勢。' },
+            { no: 124, en: 'participant', zh: '參與者', enEx: 'Participants were asked to complete a survey.', zhEx: '要求參與者完成一份調查。' },
+            { no: 125, en: 'attendee', zh: '出席者', enEx: 'All attendees received a welcome pack.', zhEx: '所有出席者都收到迎新禮包。' },
+            { no: 126, en: 'team', zh: '團隊', enEx: 'The project team worked efficiently.', zhEx: '專案團隊工作高效。' },
+            { no: 127, en: 'leader', zh: '領導者', enEx: 'The team leader coordinated the tasks.', zhEx: '團隊領導者協調任務。' },
+            { no: 128, en: 'member', zh: '成員', enEx: 'Each member contributed ideas.', zhEx: '每位成員都提供了想法。' },
+            { no: 129, en: 'staff', zh: '員工', enEx: 'Staff are required to attend the meeting.', zhEx: '員工需參加會議。' },
+            { no: 130, en: 'personnel', zh: '人事 / 員工', enEx: 'Personnel management is crucial.', zhEx: '人事管理很重要。' },
+            { no: 131, en: 'employee', zh: '員工', enEx: 'Employees must follow company policies.', zhEx: '員工必須遵守公司政策。' },
+            { no: 132, en: 'colleague', zh: '同事', enEx: 'I discussed the project with my colleague.', zhEx: '我和同事討論了專案。' },
+            { no: 133, en: 'supervisor', zh: '主管', enEx: 'The supervisor gave constructive feedback.', zhEx: '主管給了建設性的回饋。' },
+            { no: 134, en: 'manager', zh: '經理', enEx: 'The manager approved the budget.', zhEx: '經理批准了預算。' },
+            { no: 135, en: 'director', zh: '董事 / 部門主管', enEx: 'The director oversees multiple teams.', zhEx: '董事負責監督多個團隊。' },
+            { no: 136, en: 'executive', zh: '主管 / 高階主管', enEx: 'The executive attended the board meeting.', zhEx: '高階主管參加了董事會議。' },
+            { no: 137, en: 'CEO', zh: '執行長', enEx: 'The CEO announced the new company strategy.', zhEx: '執行長宣布了新的公司策略。' },
+            { no: 138, en: 'CFO', zh: '財務長', enEx: 'The CFO presented the quarterly report.', zhEx: '財務長呈現季度報告。' },
+            { no: 139, en: 'COO', zh: '營運長', enEx: 'The COO monitors daily operations.', zhEx: '營運長監督日常運作。' },
+            { no: 140, en: 'board', zh: '董事會', enEx: 'The board approved the merger.', zhEx: '董事會批准了合併案。' },
+            { no: 141, en: 'shareholder', zh: '股東', enEx: 'Shareholders attended the annual meeting.', zhEx: '股東參加了年度會議。' },
+            { no: 142, en: 'investment', zh: '投資', enEx: 'The company made a large investment in technology.', zhEx: '公司在科技上做了大量投資。' },
+            { no: 143, en: 'profit', zh: '利潤', enEx: 'The company reported increased profit.', zhEx: '公司報告利潤增加。' },
+            { no: 144, en: 'loss', zh: '虧損', enEx: 'The company experienced a financial loss.', zhEx: '公司遭遇財務虧損。' },
+            { no: 145, en: 'revenue', zh: '收入', enEx: 'Revenue grew by 10% this year.', zhEx: '收入今年增長了 10%。' },
+            { no: 146, en: 'expense', zh: '支出', enEx: 'Expenses must be approved by management.', zhEx: '支出必須經管理層批准。' },
+            { no: 147, en: 'budget', zh: '預算', enEx: 'The department stayed within its budget.', zhEx: '部門保持在預算範圍內。' },
+            { no: 148, en: 'forecast', zh: '預測', enEx: 'The sales forecast looks promising.', zhEx: '銷售預測看起來很有希望。' },
+            { no: 149, en: 'report', zh: '報告', enEx: 'Submit the financial report by Friday.', zhEx: '請在星期五前提交財務報告。' },
+            { no: 150, en: 'analysis', zh: '分析', enEx: 'The analysis revealed market opportunities.', zhEx: '分析顯示市場機會。' },
+           { no: 1, en: 'product', zh: '產品', enEx: 'The new product is very popular.', zhEx: '新產品非常受歡迎。' },
+            { no: 2, en: 'feature', zh: '特徵 / 功能', enEx: 'This phone has many features.', zhEx: '這款手機有許多功能。' },
+            { no: 3, en: 'specification', zh: '規格', enEx: 'Check the product specifications before purchase.', zhEx: '購買前請確認產品規格。' },
+            { no: 4, en: 'function', zh: '功能', enEx: 'The function of this device is easy to use.', zhEx: '這個裝置的功能容易操作。' },
+            { no: 5, en: 'warranty', zh: '保固', enEx: 'The product comes with a two-year warranty.', zhEx: '產品附帶兩年保固。' },
+            { no: 6, en: 'guarantee', zh: '保證', enEx: 'The company guarantees customer satisfaction.', zhEx: '公司保證顧客滿意。' },
+            { no: 7, en: 'defect', zh: '瑕疵 / 缺陷', enEx: 'The product was returned due to a defect.', zhEx: '產品因瑕疵被退回。' },
+            { no: 8, en: 'repair', zh: '修理', enEx: 'The company repaired the broken device.', zhEx: '公司修理了壞掉的裝置。' },
+            { no: 9, en: 'replacement', zh: '替換', enEx: 'We provide free replacement for damaged goods.', zhEx: '我們提供損壞產品免費替換。' },
+            { no: 10, en: 'service', zh: '服務', enEx: 'Customer service is available 24/7.', zhEx: '客服全天候提供服務。' },
+            { no: 11, en: 'hotline', zh: '熱線', enEx: 'Call the hotline for assistance.', zhEx: '致電客服熱線尋求協助。' },
+            { no: 12, en: 'inquiry', zh: '詢問 / 問題', enEx: 'We received an inquiry about the product.', zhEx: '我們收到關於產品的詢問。' },
+            { no: 13, en: 'complaint', zh: '投訴', enEx: 'The customer filed a complaint.', zhEx: '顧客提出了一項投訴。' },
+            { no: 14, en: 'refund', zh: '退款', enEx: 'A full refund was issued for the defective item.', zhEx: '對有缺陷的商品全額退款。' },
+            { no: 15, en: 'exchange', zh: '換貨', enEx: 'The store allows product exchange within 7 days.', zhEx: '商店允許七天內換貨。' },
+            { no: 16, en: 'satisfaction', zh: '滿意度', enEx: 'Customer satisfaction is our priority.', zhEx: '顧客滿意度是我們的首要任務。' },
+            { no: 17, en: 'quality', zh: '品質', enEx: 'The product quality is excellent.', zhEx: '產品品質優良。' },
+            { no: 18, en: 'durable', zh: '耐用的', enEx: 'This material is very durable.', zhEx: '這種材料非常耐用。' },
+            { no: 19, en: 'reliable', zh: '可靠的', enEx: 'He is a reliable employee.', zhEx: '他是一名可靠的員工。' },
+            { no: 20, en: 'efficient', zh: '高效率的', enEx: 'The new system is more efficient.', zhEx: '新系統效率更高。' },
+            { no: 21, en: 'convenient', zh: '方便的', enEx: 'Online shopping is convenient.', zhEx: '網購很方便。' },
+            { no: 22, en: 'instruction', zh: '說明 / 指示', enEx: 'Follow the instructions carefully.', zhEx: '仔細遵循說明。' },
+            { no: 23, en: 'manual', zh: '手冊', enEx: 'The manual explains how to operate the device.', zhEx: '手冊說明如何操作裝置。' },
+            { no: 24, en: 'demonstration', zh: '示範', enEx: 'The salesman gave a product demonstration.', zhEx: '業務員進行了產品示範。' },
+            { no: 25, en: 'shipment', zh: '出貨', enEx: 'The shipment will arrive tomorrow.', zhEx: '出貨將於明天到達。' },
+            { no: 26, en: 'delivery', zh: '運送 / 配送', enEx: 'Delivery takes 3–5 business days.', zhEx: '運送需 3–5 個工作天。' },
+            { no: 27, en: 'tracking', zh: '追蹤', enEx: 'You can track your package online.', zhEx: '你可以在線追蹤包裹。' },
+            { no: 28, en: 'supplier', zh: '供應商', enEx: 'The supplier delivers high-quality materials.', zhEx: '供應商提供高品質材料。' },
+            { no: 29, en: 'vendor', zh: '廠商 / 賣方', enEx: 'We ordered the parts from a reliable vendor.', zhEx: '我們從可靠廠商訂購零件。' },
+            { no: 30, en: 'retailer', zh: '零售商', enEx: 'The retailer offers a variety of products.', zhEx: '零售商提供多種產品。' },
+            { no: 31, en: 'wholesale', zh: '批發', enEx: 'The company sells goods at wholesale prices.', zhEx: '公司以批發價銷售商品。' },
+            { no: 32, en: 'manufacture', zh: '製造', enEx: 'The company manufactures electronic devices.', zhEx: '公司製造電子產品。' },
+            { no: 33, en: 'factory', zh: '工廠', enEx: 'The factory produces 1,000 units per day.', zhEx: '工廠每天生產 1,000 件。' },
+            { no: 34, en: 'assembly', zh: '組裝', enEx: 'The assembly of the product is automated.', zhEx: '產品組裝自動化完成。' },
+            { no: 35, en: 'production', zh: '生產', enEx: 'Production increased by 20% this month.', zhEx: '本月生產增加 20%。' },
+            { no: 36, en: 'quality control', zh: '品管 / 品質控制', enEx: 'Quality control ensures product consistency.', zhEx: '品管確保產品一致性。' },
+            { no: 37, en: 'inspection', zh: '檢查 / 檢驗', enEx: 'Inspection is done before shipment.', zhEx: '出貨前進行檢驗。' },
+            { no: 38, en: 'machinery', zh: '機械設備', enEx: 'The factory invested in new machinery.', zhEx: '工廠投資新機械設備。' },
+            { no: 39, en: 'equipment', zh: '設備', enEx: 'Equipment must be maintained regularly.', zhEx: '設備必須定期維護。' },
+            { no: 40, en: 'automation', zh: '自動化', enEx: 'Automation improves production efficiency.', zhEx: '自動化提升生產效率。' },
+            { no: 41, en: 'packaging', zh: '包裝', enEx: 'Packaging protects the products during transport.', zhEx: '包裝在運輸中保護產品。' },
+            { no: 42, en: 'container', zh: '容器 / 貨櫃', enEx: 'Goods are shipped in large containers.', zhEx: '商品以大型貨櫃運送。' },
+            { no: 43, en: 'order', zh: '訂單', enEx: 'The customer placed an order online.', zhEx: '顧客在線下訂單。' },
+            { no: 44, en: 'stock', zh: '庫存', enEx: 'Check the stock before placing an order.', zhEx: '下單前檢查庫存。' },
+            { no: 45, en: 'inventory', zh: '存貨', enEx: 'Inventory must be updated daily.', zhEx: '存貨必須每日更新。' },
+            { no: 46, en: 'shipment', zh: '裝運', enEx: 'The shipment was delayed due to weather.', zhEx: '出貨因天氣延遲。' },
+            { no: 47, en: 'cargo', zh: '貨物 / 貨運', enEx: 'The cargo arrived safely at the port.', zhEx: '貨物安全抵達港口。' },
+            { no: 48, en: 'freight', zh: '貨運 / 運費', enEx: 'Freight costs have increased.', zhEx: '運費上漲了。' },
+            { no: 49, en: 'transport', zh: '運輸', enEx: 'Goods are transported by truck.', zhEx: '商品以卡車運輸。' },
+            { no: 50, en: 'logistics', zh: '物流', enEx: 'Logistics management ensures timely delivery.', zhEx: '物流管理確保及時交貨。' },
+            { no: 51, en: 'schedule', zh: '時間表 / 排程', enEx: 'The project schedule is tight.', zhEx: '專案時間表很緊湊。' },
+            { no: 52, en: 'timetable', zh: '時刻表', enEx: 'Check the train timetable before leaving.', zhEx: '出發前查看火車時刻表。' },
+            { no: 53, en: 'route', zh: '路線', enEx: 'The delivery route is optimized.', zhEx: '配送路線已優化。' },
+            { no: 54, en: 'plan', zh: '計畫', enEx: 'We have a detailed plan for the project.', zhEx: '我們有詳細的專案計畫。' },
+            { no: 55, en: 'project', zh: '專案', enEx: 'The team started a new project.', zhEx: '團隊開始了一個新專案。' },
+            { no: 56, en: 'team', zh: '團隊', enEx: 'The team works efficiently.', zhEx: '團隊工作高效。' },
+            { no: 57, en: 'leader', zh: '領導者', enEx: 'The team leader assigned tasks.', zhEx: '團隊領導分配了任務。' },
+            { no: 58, en: 'member', zh: '成員', enEx: 'Each member contributed ideas.', zhEx: '每位成員都提供了想法。' },
+            { no: 59, en: 'staff', zh: '員工', enEx: 'Staff are required to attend training.', zhEx: '員工需參加培訓。' },
+            { no: 60, en: 'employee', zh: '員工', enEx: 'Employees must follow company policies.', zhEx: '員工必須遵守公司政策。' },
+            { no: 61, en: 'manager', zh: '經理', enEx: 'The manager approved the budget.', zhEx: '經理批准了預算。' },
+            { no: 62, en: 'supervisor', zh: '主管', enEx: 'The supervisor monitored the workflow.', zhEx: '主管監控工作流程。' },
+            { no: 63, en: 'department', zh: '部門', enEx: 'The customer service department handles inquiries.', zhEx: '客服部門處理詢問。' },
+            { no: 64, en: 'division', zh: '分部 / 部門', enEx: 'The production division increased output.', zhEx: '生產部門增加產量。' },
+            { no: 65, en: 'branch', zh: '分支 / 分部', enEx: 'The company has branches nationwide.', zhEx: '公司在全國有分支機構。' },
+            { no: 66, en: 'office', zh: '辦公室', enEx: 'The new office is fully equipped.', zhEx: '新辦公室設備齊全。' },
+            { no: 67, en: 'company', zh: '公司', enEx: 'The company expanded its operations.', zhEx: '公司擴展業務。' },
+            { no: 68, en: 'organization', zh: '組織', enEx: 'The organization supports social initiatives.', zhEx: '該組織支持社會公益。' },
+            { no: 69, en: 'enterprise', zh: '企業', enEx: 'The enterprise invested in advanced machinery.', zhEx: '該企業投資於先進機械。' },
+            { no: 70, en: 'contract', zh: '合約', enEx: 'The contract was signed yesterday.', zhEx: '合約昨天簽署了。' },
+            { no: 71, en: 'agreement', zh: '協議', enEx: 'The two parties reached an agreement.', zhEx: '雙方達成協議。' },
+            { no: 72, en: 'clause', zh: '條款', enEx: 'The contract includes a confidentiality clause.', zhEx: '合約包含保密條款。' },
+            { no: 73, en: 'term', zh: '期限 / 條件', enEx: 'The lease term is one year.', zhEx: '租約期限為一年。' },
+            { no: 74, en: 'condition', zh: '條件', enEx: 'The sale is subject to conditions.', zhEx: '交易受特定條件限制。' },
+            { no: 75, en: 'signature', zh: '簽名', enEx: 'Please provide your signature here.', zhEx: '請在此簽名。' },
+            { no: 76, en: 'document', zh: '文件', enEx: 'Keep all important documents safe.', zhEx: '保存所有重要文件。' },
+            { no: 77, en: 'form', zh: '表格', enEx: 'Fill out the application form.', zhEx: '填寫申請表格。' },
+            { no: 78, en: 'policy', zh: '政策 / 條款', enEx: 'The company has a strict policy on refunds.', zhEx: '公司對退款有嚴格政策。' },
+            { no: 79, en: 'regulation', zh: '規定', enEx: 'Tax regulations are strict.', zhEx: '稅務規定很嚴格。' },
+            { no: 80, en: 'procedure', zh: '程序', enEx: 'Follow the procedure carefully.', zhEx: '仔細遵循程序。' },
+            { no: 81, en: 'guideline', zh: '指南', enEx: 'Guidelines help standardize processes.', zhEx: '指南有助於流程標準化。' },
+            { no: 82, en: 'instruction', zh: '指示 / 說明', enEx: 'Follow the instructions step by step.', zhEx: '一步一步遵循說明。' },
+            { no: 83, en: 'announcement', zh: '公告', enEx: 'The company made an important announcement.', zhEx: '公司發布重要公告。' },
+            { no: 84, en: 'notice', zh: '通知', enEx: 'Employees received a notice about the meeting.', zhEx: '員工收到會議通知。' },
+            { no: 85, en: 'memo', zh: '備忘錄', enEx: 'I sent a memo to all staff.', zhEx: '我發送了備忘錄給所有員工。' },
+            { no: 86, en: 'report', zh: '報告', enEx: 'The report was submitted on time.', zhEx: '報告按時提交。' },
+            { no: 87, en: 'summary', zh: '摘要', enEx: 'Read the executive summary carefully.', zhEx: '仔細閱讀執行摘要。' },
+            { no: 88, en: 'chart', zh: '圖表', enEx: 'The chart shows sales growth.', zhEx: '圖表顯示銷售增長。' },
+            { no: 89, en: 'graph', zh: '圖表', enEx: 'The graph illustrates market trends.', zhEx: '圖表說明市場趨勢。' },
+            { no: 90, en: 'figure', zh: '數字 / 圖表', enEx: 'The figures indicate profit increase.', zhEx: '數字顯示利潤增加。' },
+            { no: 91, en: 'statistic', zh: '統計數據', enEx: 'Statistics show customer satisfaction.', zhEx: '統計顯示顧客滿意度。' },
+            { no: 92, en: 'analysis', zh: '分析', enEx: 'Market analysis is essential.', zhEx: '市場分析很重要。' },
+            { no: 93, en: 'trend', zh: '趨勢', enEx: 'The trend shows growth in demand.', zhEx: '趨勢顯示需求增長。' },
+            { no: 94, en: 'forecast', zh: '預測', enEx: 'Sales forecast predicts higher revenue.', zhEx: '銷售預測顯示收入增加。' },
+            { no: 95, en: 'estimate', zh: '估計', enEx: 'The project estimate was accurate.', zhEx: '專案估算準確。' },
+            { no: 96, en: 'result', zh: '結果', enEx: 'The campaign results were impressive.', zhEx: '活動結果令人印象深刻。' },
+            { no: 97, en: 'outcome', zh: '結果', enEx: 'The outcome of the negotiation was positive.', zhEx: '談判結果正面。' },
+            { no: 98, en: 'solution', zh: '解決方案', enEx: 'We found a solution to the issue.', zhEx: '我們找到問題的解決方案。' },
+            { no: 99, en: 'problem', zh: '問題', enEx: 'The main problem is low efficiency.', zhEx: '主要問題是效率低。' },
+            { no: 100, en: 'issue', zh: '議題 / 問題', enEx: 'Customer complaints are a serious issue.', zhEx: '顧客投訴是一個嚴重問題。' },
+            { no: 101, en: 'concern', zh: '擔憂 / 關切', enEx: 'Customer concerns were addressed promptly.', zhEx: '顧客的關切得到即時處理。' },
+            { no: 102, en: 'opportunity', zh: '機會', enEx: 'This product launch creates new opportunities.', zhEx: '這次產品發佈帶來新機會。' },
+            { no: 103, en: 'resource', zh: '資源', enEx: 'Human resources are crucial for growth.', zhEx: '人力資源對成長至關重要。' },
+            { no: 104, en: 'tool', zh: '工具', enEx: 'The new software is a powerful tool.', zhEx: '新軟體是強大的工具。' },
+            { no: 105, en: 'software', zh: '軟體', enEx: 'The company upgraded its software.', zhEx: '公司升級了軟體。' },
+            { no: 106, en: 'hardware', zh: '硬體', enEx: 'Hardware upgrades improved performance.', zhEx: '硬體升級提升了效能。' },
+            { no: 107, en: 'database', zh: '資料庫', enEx: 'The database stores customer information.', zhEx: '資料庫儲存顧客資訊。' },
+            { no: 108, en: 'system', zh: '系統', enEx: 'The system crashed last night.', zhEx: '系統昨晚當機了。' },
+            { no: 109, en: 'network', zh: '網路', enEx: 'A secure network protects sensitive data.', zhEx: '安全的網路保護敏感資料。' },
+            { no: 110, en: 'communication', zh: '溝通', enEx: 'Effective communication improves teamwork.', zhEx: '有效溝通提升團隊合作。' },
+            { no: 111, en: 'email', zh: '電子郵件', enEx: 'I sent an email to confirm the order.', zhEx: '我發送了一封電子郵件確認訂單。' },
+            { no: 112, en: 'phone', zh: '電話', enEx: 'The client called me on the phone.', zhEx: '客戶打電話給我。' },
+            { no: 113, en: 'message', zh: '訊息', enEx: 'I received a message about the shipment.', zhEx: '我收到關於出貨的訊息。' },
+            { no: 114, en: 'notification', zh: '通知', enEx: 'The system sent a notification about updates.', zhEx: '系統發送了更新通知。' },
+            { no: 115, en: 'feedback', zh: '回饋', enEx: 'Customer feedback helps improve products.', zhEx: '顧客回饋有助於改進產品。' },
+            { no: 116, en: 'review', zh: '評價 / 審查', enEx: 'The product received excellent reviews.', zhEx: '該產品獲得了優良評價。' },
+            { no: 117, en: 'survey', zh: '調查', enEx: 'The company conducted a customer survey.', zhEx: '公司進行了顧客調查。' },
+            { no: 118, en: 'evaluation', zh: '評估', enEx: 'Staff evaluation is done annually.', zhEx: '員工評估每年進行一次。' },
+            { no: 119, en: 'appraisal', zh: '評價 / 考核', enEx: 'Performance appraisal determines bonuses.', zhEx: '績效考核決定獎金。' },
+            { no: 120, en: 'bonus', zh: '獎金', enEx: 'Employees received a year-end bonus.', zhEx: '員工獲得了年終獎金。' },
+            { no: 121, en: 'salary', zh: '薪水', enEx: 'The new position offers a higher salary.', zhEx: '新職位提供更高薪水。' },
+            { no: 122, en: 'payment', zh: '付款', enEx: 'Payment must be made within 30 days.', zhEx: '付款必須在 30 天內完成。' },
+            { no: 123, en: 'deposit', zh: '存款 / 訂金', enEx: 'A deposit is required to secure the order.', zhEx: '需要訂金以確認訂單。' },
+            { no: 124, en: 'withdraw', zh: '提取 / 提款', enEx: 'Customers can withdraw money from ATMs.', zhEx: '顧客可以從自動提款機提取現金。' },
+            { no: 125, en: 'transfer', zh: '轉帳 / 調動', enEx: 'The funds were transferred to the account.', zhEx: '資金已轉入帳戶。' },
+            { no: 126, en: 'balance', zh: '餘額', enEx: 'Check your account balance regularly.', zhEx: '定期檢查帳戶餘額。' },
+            { no: 127, en: 'account', zh: '帳戶', enEx: 'Open a new bank account online.', zhEx: '在線開設新的銀行帳戶。' },
+            { no: 128, en: 'loan', zh: '貸款', enEx: 'The bank approved the loan application.', zhEx: '銀行批准了貸款申請。' },
+            { no: 129, en: 'interest', zh: '利息', enEx: 'The loan accrues interest monthly.', zhEx: '貸款每月產生利息。' },
+            { no: 130, en: 'tax', zh: '稅金', enEx: 'Pay taxes before the deadline.', zhEx: '在截止日前繳納稅金。' },
+            { no: 131, en: 'refund', zh: '退款', enEx: 'The company issued a full refund.', zhEx: '公司全額退款。' },
+            { no: 132, en: 'benefit', zh: '福利 / 好處', enEx: 'Employees enjoy many benefits.', zhEx: '員工享有許多福利。' },
+            { no: 133, en: 'insurance', zh: '保險', enEx: 'Health insurance is provided by the company.', zhEx: '公司提供健康保險。' },
+            { no: 134, en: 'leave', zh: '休假 / 請假', enEx: 'Employees can take leave with approval.', zhEx: '員工可經批准請假。' },
+            { no: 135, en: 'vacation', zh: '假期', enEx: 'She went on vacation to Hawaii.', zhEx: '她去夏威夷度假。' },
+            { no: 136, en: 'absence', zh: '缺席 / 缺勤', enEx: 'Absence must be reported in advance.', zhEx: '缺席必須提前報告。' },
+            { no: 137, en: 'attendance', zh: '出席 / 出勤', enEx: 'Attendance is mandatory for the seminar.', zhEx: '研討會必須出席。' },
+            { no: 138, en: 'punctuality', zh: '守時', enEx: 'Punctuality is appreciated in the workplace.', zhEx: '工作中守時很重要。' },
+            { no: 139, en: 'discipline', zh: '紀律', enEx: 'Employees must maintain discipline.', zhEx: '員工必須保持紀律。' },
+            { no: 140, en: 'responsibility', zh: '責任', enEx: 'It is your responsibility to complete tasks.', zhEx: '完成任務是你的責任。' },
+            { no: 141, en: 'duty', zh: '職責', enEx: 'Performing your duty is essential.', zhEx: '履行職責是必須的。' },
+            { no: 142, en: 'task', zh: '任務', enEx: 'Complete the assigned tasks on time.', zhEx: '按時完成分配的任務。' },
+            { no: 143, en: 'assignment', zh: '作業 / 任務', enEx: 'The assignment is due tomorrow.', zhEx: '作業明天到期。' },
+            { no: 144, en: 'deadline', zh: '截止日期', enEx: 'Submit the report before the deadline.', zhEx: '在截止日前提交報告。' },
+            { no: 145, en: 'priority', zh: '優先順序', enEx: 'Finish high-priority tasks first.', zhEx: '先完成高優先順序的任務。' },
+            { no: 146, en: 'goal', zh: '目標', enEx: 'Set realistic goals for the project.', zhEx: '為專案設定合理目標。' },
+            { no: 147, en: 'objective', zh: '目標', enEx: 'The objective is to increase sales.', zhEx: '目標是增加銷售額。' },
+            { no: 148, en: 'plan', zh: '計畫', enEx: 'We need a new plan for marketing.', zhEx: '我們需要新的行銷計畫。' },
+            { no: 149, en: 'strategy', zh: '策略', enEx: 'The company developed a new strategy.', zhEx: '公司制定了新策略。' },
+            { no: 150, en: 'vision', zh: '願景 / 遠景', enEx: 'The CEO shared the company vision.', zhEx: '執行長分享了公司的願景。' },
+            { no: 1, en: 'agreement', zh: '協議', enEx: 'The parties signed an agreement.', zhEx: '雙方簽署了協議。' },
+            { no: 2, en: 'contract', zh: '合約', enEx: 'The contract is legally binding.', zhEx: '合約具有法律約束力。' },
+            { no: 3, en: 'clause', zh: '條款', enEx: 'The contract includes a confidentiality clause.', zhEx: '合約包含保密條款。' },
+            { no: 4, en: 'term', zh: '條件 / 期限', enEx: 'The lease term is one year.', zhEx: '租約期限為一年。' },
+            { no: 5, en: 'condition', zh: '條件', enEx: 'The sale is subject to conditions.', zhEx: '交易受特定條件限制。' },
+            { no: 6, en: 'signature', zh: '簽名', enEx: 'Please provide your signature here.', zhEx: '請在此簽名。' },
+            { no: 7, en: 'attorney', zh: '律師', enEx: 'The attorney advised on legal matters.', zhEx: '律師就法律事宜提供建議。' },
+            { no: 8, en: 'lawyer', zh: '律師', enEx: 'The lawyer reviewed the contract.', zhEx: '律師審查了合約。' },
+            { no: 9, en: 'legal', zh: '法律的', enEx: 'Legal advice is necessary for this case.', zhEx: '這個案件需要法律建議。' },
+            { no: 10, en: 'policy', zh: '政策 / 保險單', enEx: 'The insurance policy covers accidents.', zhEx: '保險單涵蓋意外。' },
+            { no: 11, en: 'regulation', zh: '規定', enEx: 'Compliance with regulations is mandatory.', zhEx: '遵守規定是強制性的。' },
+            { no: 12, en: 'obligation', zh: '義務', enEx: 'Companies have an obligation to pay taxes.', zhEx: '公司有繳稅義務。' },
+            { no: 13, en: 'penalty', zh: '罰則', enEx: 'Violating the rules incurs a penalty.', zhEx: '違反規則會受到處罰。' },
+            { no: 14, en: 'dispute', zh: '爭議', enEx: 'The dispute was resolved through mediation.', zhEx: '爭議通過調解解決。' },
+            { no: 15, en: 'settlement', zh: '和解', enEx: 'The settlement ended the lawsuit.', zhEx: '和解結束了訴訟。' },
+            { no: 16, en: 'liability', zh: '法律責任', enEx: 'The company assumed liability for damages.', zhEx: '公司承擔損害的法律責任。' },
+            { no: 17, en: 'insurance', zh: '保險', enEx: 'The company provides insurance for employees.', zhEx: '公司為員工提供保險。' },
+            { no: 18, en: 'coverage', zh: '保險範圍', enEx: 'The coverage includes theft and fire.', zhEx: '保險範圍涵蓋竊盜和火災。' },
+            { no: 19, en: 'claim', zh: '索賠 / 理賠', enEx: 'The client filed a claim for damages.', zhEx: '客戶提出損害索賠。' },
+            { no: 20, en: 'policyholder', zh: '保單持有人', enEx: 'The policyholder received a refund.', zhEx: '保單持有人獲得退款。' },
+            { no: 21, en: 'renewal', zh: '更新 / 續保', enEx: 'Renewal of the contract is automatic.', zhEx: '合約自動續約。' },
+            { no: 22, en: 'compensation', zh: '賠償', enEx: 'Workers received compensation for injuries.', zhEx: '工人因受傷獲得賠償。' },
+            { no: 23, en: 'risk', zh: '風險', enEx: 'Investment carries a high risk.', zhEx: '投資風險很高。' },
+            { no: 24, en: 'guarantee', zh: '保證', enEx: 'The manufacturer guarantees product quality.', zhEx: '製造商保證產品品質。' },
+            { no: 25, en: 'jurisdiction', zh: '司法管轄權', enEx: 'The case falls under local jurisdiction.', zhEx: '案件屬於當地司法管轄。' },
+            { no: 26, en: 'valid', zh: '有效的', enEx: 'The contract is valid for one year.', zhEx: '合約有效期為一年。' },
+            { no: 27, en: 'invalid', zh: '無效的', enEx: 'The agreement is invalid without a signature.', zhEx: '沒有簽名，協議無效。' },
+            { no: 28, en: 'binding', zh: '有約束力的', enEx: 'The decision is binding on both parties.', zhEx: '決定對雙方具有約束力。' },
+            { no: 29, en: 'enforce', zh: '執行 / 強制實施', enEx: 'Courts enforce contracts strictly.', zhEx: '法院嚴格執行合約。' },
+            { no: 30, en: 'notarize', zh: '公證', enEx: 'The document was notarized by a lawyer.', zhEx: '文件由律師公證。' },
+            { no: 31, en: 'compliance', zh: '遵守 / 合規', enEx: 'Compliance with laws is mandatory.', zhEx: '遵守法律是強制性的。' },
+            { no: 32, en: 'law', zh: '法律', enEx: 'Breaking the law has consequences.', zhEx: '違法會有後果。' },
+            { no: 33, en: 'act', zh: '法案 / 行為', enEx: 'The new act regulates data privacy.', zhEx: '新法案規範資料隱私。' },
+            { no: 34, en: 'statute', zh: '法規 / 成文法', enEx: 'Statutes are enforced by courts.', zhEx: '法規由法院執行。' },
+            { no: 35, en: 'code', zh: '法典 / 規範', enEx: 'The company follows a strict code of ethics.', zhEx: '公司遵守嚴格的道德規範。' },
+            { no: 36, en: 'rule', zh: '規則', enEx: 'Rules must be followed at all times.', zhEx: '規則必須始終遵守。' },
+            { no: 37, en: 'requirement', zh: '要求 / 規定', enEx: 'The job has strict requirements.', zhEx: '這份工作有嚴格要求。' },
+            { no: 38, en: 'permit', zh: '許可證 / 允許', enEx: 'You need a permit to operate.', zhEx: '操作需要許可證。' },
+            { no: 39, en: 'license', zh: '執照', enEx: 'The driver holds a valid license.', zhEx: '駕駛持有有效駕照。' },
+            { no: 40, en: 'authorization', zh: '授權', enEx: 'Authorization is required to access data.', zhEx: '需要授權才能存取資料。' },
+            { no: 41, en: 'approval', zh: '批准', enEx: 'The project requires management approval.', zhEx: '專案需管理層批准。' },
+            { no: 42, en: 'application', zh: '申請 / 應用', enEx: 'Submit your application online.', zhEx: '在線提交你的申請。' },
+            { no: 43, en: 'form', zh: '表格', enEx: 'Fill out the registration form.', zhEx: '填寫註冊表格。' },
+            { no: 44, en: 'document', zh: '文件', enEx: 'Keep important documents safe.', zhEx: '保管重要文件。' },
+            { no: 45, en: 'record', zh: '記錄', enEx: 'Maintain accurate records of transactions.', zhEx: '保存準確的交易記錄。' },
+            { no: 46, en: 'report', zh: '報告', enEx: 'Submit the report by Friday.', zhEx: '星期五前提交報告。' },
+            { no: 47, en: 'memo', zh: '備忘錄', enEx: 'I sent a memo to all staff.', zhEx: '我發送了一份備忘錄給所有員工。' },
+            { no: 48, en: 'notification', zh: '通知', enEx: 'A notification was sent about the hearing.', zhEx: '已發送關於聽證會的通知。' },
+            { no: 49, en: 'notice', zh: '通知 / 告示', enEx: 'Employees received a notice about policy changes.', zhEx: '員工收到政策變更通知。' },
+            { no: 50, en: 'announcement', zh: '公告 / 宣布', enEx: 'The announcement clarified the new rules.', zhEx: '公告澄清了新規則。' },
+            { no: 51, en: 'testimony', zh: '證詞', enEx: 'The witness gave her testimony in court.', zhEx: '證人在法庭上作證。' },
+            { no: 52, en: 'evidence', zh: '證據', enEx: 'The lawyer presented new evidence.', zhEx: '律師提出了新的證據。' },
+            { no: 53, en: 'witness', zh: '證人', enEx: 'The witness identified the suspect.', zhEx: '證人指認了嫌疑人。' },
+            { no: 54, en: 'trial', zh: '審判 / 試驗', enEx: 'The trial lasted three weeks.', zhEx: '審判持續了三週。' },
+            { no: 55, en: 'jury', zh: '陪審團', enEx: 'The jury reached a verdict.', zhEx: '陪審團作出裁決。' },
+            { no: 56, en: 'verdict', zh: '裁決', enEx: 'The verdict was not guilty.', zhEx: '裁決為無罪。' },
+            { no: 57, en: 'sentence', zh: '判決 / 刑期', enEx: 'He received a ten-year sentence.', zhEx: '他被判十年刑期。' },
+            { no: 58, en: 'appeal', zh: '上訴 / 呼籲', enEx: 'The defendant filed an appeal.', zhEx: '被告提出上訴。' },
+            { no: 59, en: 'hearing', zh: '聽證會', enEx: 'A public hearing was scheduled.', zhEx: '安排了一場公開聽證會。' },
+            { no: 60, en: 'case', zh: '案件', enEx: 'The case was closed by the judge.', zhEx: '案件被法官結案。' },
+            { no: 61, en: 'plaintiff', zh: '原告', enEx: 'The plaintiff demanded compensation.', zhEx: '原告要求賠償。' },
+            { no: 62, en: 'defendant', zh: '被告', enEx: 'The defendant denied all charges.', zhEx: '被告否認所有指控。' },
+            { no: 63, en: 'prosecutor', zh: '檢察官', enEx: 'The prosecutor questioned the witness.', zhEx: '檢察官詢問證人。' },
+            { no: 64, en: 'judge', zh: '法官 / 判斷', enEx: 'The judge ruled in favor of the plaintiff.', zhEx: '法官裁定原告勝訴。' },
+            { no: 65, en: 'court', zh: '法院', enEx: 'The trial took place in the district court.', zhEx: '審判在地方法院舉行。' },
+            { no: 66, en: 'justice', zh: '正義 / 法官', enEx: 'Justice must be served.', zhEx: '正義必須得到伸張。' },
+            { no: 67, en: 'crime', zh: '犯罪', enEx: 'The crime rate has decreased.', zhEx: '犯罪率已下降。' },
+            { no: 68, en: 'offense', zh: '罪行 / 違反', enEx: 'Speeding is a minor offense.', zhEx: '超速是輕罪。' },
+            { no: 69, en: 'violation', zh: '違規 / 違反', enEx: 'The company committed a safety violation.', zhEx: '公司違反了安全規定。' },
+            { no: 70, en: 'fraud', zh: '詐欺', enEx: 'He was arrested for fraud.', zhEx: '他因詐欺被捕。' },
+            { no: 71, en: 'theft', zh: '偷竊', enEx: 'Theft is punishable by law.', zhEx: '偷竊依法處罰。' },
+            { no: 72, en: 'robbery', zh: '搶劫', enEx: 'The robbery happened at night.', zhEx: '搶劫發生在晚上。' },
+            { no: 73, en: 'burglary', zh: '入室盜竊', enEx: 'Burglary is a serious crime.', zhEx: '入室盜竊是嚴重罪行。' },
+            { no: 74, en: 'homicide', zh: '殺人', enEx: 'He was convicted of homicide.', zhEx: '他被判殺人罪。' },
+            { no: 75, en: 'murder', zh: '謀殺', enEx: 'The murder shocked the town.', zhEx: '這起謀殺震驚了小鎮。' },
+            { no: 76, en: 'assault', zh: '攻擊 / 襲擊', enEx: 'He was charged with assault.', zhEx: '他被控告攻擊罪。' },
+            { no: 77, en: 'arrest', zh: '逮捕', enEx: 'The police arrested the suspect.', zhEx: '警方逮捕了嫌疑人。' },
+            { no: 78, en: 'charge', zh: '指控 / 收費', enEx: 'He faced a charge of theft.', zhEx: '他面臨偷竊指控。' },
+            { no: 79, en: 'bail', zh: '保釋金', enEx: 'He was released on bail.', zhEx: '他交保獲釋。' },
+            { no: 80, en: 'custody', zh: '拘留 / 監護權', enEx: 'The suspect is in police custody.', zhEx: '嫌疑人被警方拘留。' },
+            { no: 81, en: 'imprisonment', zh: '監禁', enEx: 'The sentence included five years of imprisonment.', zhEx: '判決包含五年監禁。' },
+            { no: 82, en: 'parole', zh: '假釋', enEx: 'He was released on parole.', zhEx: '他獲得假釋。' },
+            { no: 83, en: 'probation', zh: '緩刑 / 試用期', enEx: 'The court granted probation.', zhEx: '法院准予緩刑。' },
+            { no: 84, en: 'fine', zh: '罰金 / 優良的', enEx: 'He paid a fine for speeding.', zhEx: '他因超速繳納罰金。' },
+            { no: 85, en: 'lawsuit', zh: '訴訟', enEx: 'The company faced a lawsuit.', zhEx: '公司面臨訴訟。' },
+            { no: 86, en: 'litigation', zh: '訴訟程序', enEx: 'The dispute went into litigation.', zhEx: '爭議進入訴訟程序。' },
+            { no: 87, en: 'arbitration', zh: '仲裁', enEx: 'The contract requires arbitration.', zhEx: '合約要求仲裁。' },
+            { no: 88, en: 'mediation', zh: '調解', enEx: 'Mediation resolved the conflict.', zhEx: '調解解決了衝突。' },
+            { no: 89, en: 'negotiation', zh: '談判', enEx: 'Negotiation is essential for agreements.', zhEx: '協議需要談判。' },
+            { no: 90, en: 'compromise', zh: '妥協', enEx: 'They reached a compromise.', zhEx: '他們達成了妥協。' },
+            { no: 91, en: 'consent', zh: '同意', enEx: 'Parental consent is required.', zhEx: '需要父母同意。' },
+            { no: 92, en: 'mutual', zh: '互相的', enEx: 'They have mutual respect.', zhEx: '他們互相尊重。' },
+            { no: 93, en: 'obey', zh: '遵守 / 服從', enEx: 'Employees must obey the rules.', zhEx: '員工必須遵守規則。' },
+            { no: 94, en: 'violate', zh: '違反 / 侵犯', enEx: 'He violated the contract terms.', zhEx: '他違反了合約條款。' },
+            { no: 95, en: 'restrict', zh: '限制', enEx: 'The law restricts smoking indoors.', zhEx: '法律限制室內吸菸。' },
+            { no: 96, en: 'prohibit', zh: '禁止', enEx: 'The law prohibits drunk driving.', zhEx: '法律禁止酒駕。' },
+            { no: 97, en: 'ban', zh: '禁止 / 禁令', enEx: 'The city imposed a smoking ban.', zhEx: '城市實施禁菸令。' },
+            { no: 98, en: 'allow', zh: '允許', enEx: 'The contract allows early termination.', zhEx: '合約允許提前終止。' },
+            { no: 99, en: 'permit', zh: '允許 / 許可證', enEx: 'The school permits late entry.', zhEx: '學校允許遲到入場。' },
+            { no: 100, en: 'authorize', zh: '授權', enEx: 'The manager authorized the payment.', zhEx: '經理授權付款。' },
+            { no: 101, en: 'approve', zh: '批准', enEx: 'The board approved the new policy.', zhEx: '董事會批准了新政策。' },
+            { no: 102, en: 'reject', zh: '拒絕', enEx: 'The company rejected the proposal.', zhEx: '公司拒絕了提案。' },
+            { no: 103, en: 'accept', zh: '接受', enEx: 'She accepted the terms of the contract.', zhEx: '她接受了合約條款。' },
+            { no: 104, en: 'enforce', zh: '執行', enEx: 'The police enforce the law.', zhEx: '警方執行法律。' },
+            { no: 105, en: 'implement', zh: '實施 / 工具', enEx: 'The company implemented new rules.', zhEx: '公司實施了新規則。' },
+            { no: 106, en: 'comply', zh: '遵守', enEx: 'Employees must comply with safety regulations.', zhEx: '員工必須遵守安全規定。' },
+            { no: 107, en: 'conform', zh: '符合 / 遵從', enEx: 'The design conforms to the standards.', zhEx: '設計符合標準。' },
+            { no: 108, en: 'abide', zh: '遵守 / 忍受', enEx: 'You must abide by the law.', zhEx: '你必須遵守法律。' },
+            { no: 109, en: 'bind', zh: '約束 / 綁', enEx: 'The contract binds both parties.', zhEx: '合約約束雙方。' },
+            { no: 110, en: 'oblige', zh: '使有義務', enEx: 'The law obliges companies to pay taxes.', zhEx: '法律使公司有繳稅義務。' },
+            { no: 111, en: 'warrant', zh: '保證 / 搜索令', enEx: 'The police obtained a search warrant.', zhEx: '警方取得了搜索令。' },
+            { no: 112, en: 'license', zh: '執照 / 許可', enEx: 'You need a license to practice law.', zhEx: '從事法律工作需要執照。' },
+            { no: 113, en: 'certificate', zh: '證書', enEx: 'She received a teaching certificate.', zhEx: '她獲得了教師證書。' },
+            { no: 114, en: 'document', zh: '文件', enEx: 'All documents must be signed.', zhEx: '所有文件必須簽署。' },
+            { no: 115, en: 'record', zh: '記錄', enEx: 'The lawyer kept a record of the case.', zhEx: '律師保留了案件記錄。' },
+            { no: 116, en: 'file', zh: '歸檔 / 檔案', enEx: 'She filed a complaint.', zhEx: '她提交了投訴。' },
+            { no: 117, en: 'register', zh: '登記', enEx: 'The company registered a trademark.', zhEx: '公司註冊了一個商標。' },
+            { no: 118, en: 'apply', zh: '申請 / 應用', enEx: 'He applied for a visa.', zhEx: '他申請了簽證。' },
+            { no: 119, en: 'petition', zh: '請願 / 請求', enEx: 'Citizens signed a petition for change.', zhEx: '市民簽署了改革請願書。' },
+            { no: 120, en: 'appeal', zh: '上訴 / 吸引', enEx: 'They appealed to the higher court.', zhEx: '他們向高等法院上訴。' },
+            { no: 121, en: 'claimant', zh: '索賠人', enEx: 'The claimant requested compensation.', zhEx: '索賠人要求賠償。' },
+            { no: 122, en: 'beneficiary', zh: '受益人', enEx: 'She is the beneficiary of the insurance policy.', zhEx: '她是保險單的受益人。' },
+            { no: 123, en: 'heir', zh: '繼承人', enEx: 'The heir inherited the property.', zhEx: '繼承人繼承了財產。' },
+            { no: 124, en: 'successor', zh: '繼任者', enEx: 'The successor took over the position.', zhEx: '繼任者接管了職位。' },
+            { no: 125, en: 'assign', zh: '分配 / 指派', enEx: 'The manager assigned tasks to employees.', zhEx: '經理分配任務給員工。' },
+            { no: 126, en: 'delegate', zh: '委派 / 代表', enEx: 'He delegated responsibility to his assistant.', zhEx: '他把責任交給助理。' },
+            { no: 127, en: 'appoint', zh: '任命', enEx: 'She was appointed as the new director.', zhEx: '她被任命為新主管。' },
+            { no: 128, en: 'nominate', zh: '提名', enEx: 'He was nominated for the award.', zhEx: '他被提名獲得獎項。' },
+            { no: 129, en: 'elect', zh: '選舉 / 推選', enEx: 'The people elected a new president.', zhEx: '人民選舉了一位新總統。' },
+            { no: 130, en: 'vote', zh: '投票', enEx: 'Citizens voted in the election.', zhEx: '市民在選舉中投票。' },
+            { no: 131, en: 'ballot', zh: '選票', enEx: 'They cast their ballots secretly.', zhEx: '他們秘密投下選票。' },
+            { no: 132, en: 'referendum', zh: '公投', enEx: 'The country held a referendum on independence.', zhEx: '該國舉行了獨立公投。' },
+            { no: 133, en: 'constitution', zh: '憲法', enEx: 'The constitution guarantees freedom of speech.', zhEx: '憲法保障言論自由。' },
+            { no: 134, en: 'amendment', zh: '修正案', enEx: 'The amendment was passed by parliament.', zhEx: '修正案獲得國會通過。' },
+            { no: 135, en: 'statute', zh: '法令 / 法規', enEx: 'The statute prohibits discrimination.', zhEx: '法令禁止歧視。' },
+            { no: 136, en: 'act', zh: '法案 / 行為', enEx: 'The parliament passed a new act.', zhEx: '國會通過了一項新法案。' },
+            { no: 137, en: 'bill', zh: '法案 / 帳單', enEx: 'The bill was debated in congress.', zhEx: '國會辯論該法案。' },
+            { no: 138, en: 'ordinance', zh: '條例', enEx: 'The city passed a new ordinance.', zhEx: '城市通過了一項新條例。' },
+            { no: 139, en: 'decree', zh: '法令 / 命令', enEx: 'The king issued a decree.', zhEx: '國王頒布了一道法令。' },
+            { no: 140, en: 'charter', zh: '憲章 / 特許狀', enEx: 'The UN Charter promotes peace.', zhEx: '聯合國憲章促進和平。' },
+            { no: 141, en: 'treaty', zh: '條約', enEx: 'The countries signed a peace treaty.', zhEx: '各國簽署了和平條約。' },
+            { no: 142, en: 'alliance', zh: '同盟', enEx: 'The two nations formed an alliance.', zhEx: '兩國結成同盟。' },
+            { no: 143, en: 'union', zh: '聯盟 / 工會', enEx: 'Workers formed a union.', zhEx: '工人組成了工會。' },
+            { no: 144, en: 'federation', zh: '聯邦 / 聯合會', enEx: 'The states formed a federation.', zhEx: '各州組成了聯邦。' },
+            { no: 145, en: 'confederation', zh: '邦聯', enEx: 'The confederation united small states.', zhEx: '邦聯團結了小國。' },
+            { no: 146, en: 'organization', zh: '組織', enEx: 'The organization promotes human rights.', zhEx: '該組織推動人權。' },
+            { no: 147, en: 'institution', zh: '機構 / 制度', enEx: 'The institution was founded in 1900.', zhEx: '該機構成立於 1900 年。' },
+            { no: 148, en: 'committee', zh: '委員會', enEx: 'The committee discussed the proposal.', zhEx: '委員會討論了提案。' },
+            { no: 149, en: 'board', zh: '董事會 / 板子', enEx: 'The board approved the budget.', zhEx: '董事會批准了預算。' },
+            { no: 150, en: 'director', zh: '董事 / 主管', enEx: 'The director approved the legal agreement.', zhEx: '董事批准了法律協議。' },
+            { no: 1, en: 'warehouse', zh: '倉庫', enEx: 'The goods stored in the warehouse were shipped yesterday.', zhEx: '存放在倉庫的貨物昨天已出貨。' },
+            { no: 2, en: 'inventory', zh: '庫存', enEx: 'Inventory checked daily helps avoid shortages.', zhEx: '每日盤點的庫存有助於避免短缺。' },
+            { no: 3, en: 'stock', zh: '存貨', enEx: 'Stock kept in good condition ensures quality.', zhEx: '保持良好狀態的存貨確保品質。' },
+            { no: 4, en: 'supply', zh: '供應', enEx: 'Supplies delivered on time improve efficiency.', zhEx: '準時交付的供應提升效率。' },
+            { no: 5, en: 'demand', zh: '需求', enEx: 'Demand increasing rapidly creates pressure on factories.', zhEx: '快速增加的需求給工廠帶來壓力。' },
+            { no: 6, en: 'order', zh: '訂單', enEx: 'Orders placed online are processed within a day.', zhEx: '在線上下的訂單會在一天內處理。' },
+            { no: 7, en: 'shipment', zh: '裝運', enEx: 'The shipment delayed by customs arrived late.', zhEx: '被海關延誤的裝運晚到。' },
+            { no: 8, en: 'cargo', zh: '貨物', enEx: 'Cargo transported by sea takes longer.', zhEx: '海運的貨物花費更久時間。' },
+            { no: 9, en: 'freight', zh: '貨運', enEx: 'Freight carried by trucks reached the city.', zhEx: '卡車運載的貨運到達城市。' },
+            { no: 10, en: 'delivery', zh: '交貨', enEx: 'Deliveries scheduled for today will arrive this afternoon.', zhEx: '預定今天的交貨將於下午送達。' },
+            { no: 11, en: 'distribution', zh: '配送', enEx: 'Goods distributed across branches reduce costs.', zhEx: '分配到各分店的貨品能降低成本。' },
+            { no: 12, en: 'packaging', zh: '包裝', enEx: 'Packaging designed carefully protects fragile items.', zhEx: '精心設計的包裝保護易碎物品。' },
+            { no: 13, en: 'container', zh: '集裝箱', enEx: 'Containers loaded with products left the port.', zhEx: '裝滿產品的集裝箱離開港口。' },
+            { no: 14, en: 'supplier', zh: '供應商', enEx: 'Suppliers providing raw materials are essential.', zhEx: '提供原料的供應商至關重要。' },
+            { no: 15, en: 'vendor', zh: '供應商 / 小販', enEx: 'Vendors selling parts support production.', zhEx: '販售零件的供應商支援生產。' },
+            { no: 16, en: 'retailer', zh: '零售商', enEx: 'Retailers offering discounts attract customers.', zhEx: '提供折扣的零售商吸引顧客。' },
+            { no: 17, en: 'wholesale', zh: '批發', enEx: 'Goods sold wholesale lower the unit cost.', zhEx: '批發銷售的商品降低單價。' },
+            { no: 18, en: 'manufacture', zh: '製造', enEx: 'Products manufactured in this factory meet standards.', zhEx: '在這工廠製造的產品符合標準。' },
+            { no: 19, en: 'factory', zh: '工廠', enEx: 'The factory located near the port reduces transport costs.', zhEx: '位於港口附近的工廠降低運輸成本。' },
+            { no: 20, en: 'assembly', zh: '組裝', enEx: 'The assembly completed yesterday improved efficiency.', zhEx: '昨天完成的組裝提升了效率。' },
+            { no: 21, en: 'production', zh: '生產', enEx: 'Production running smoothly increases profits.', zhEx: '順利進行的生產提高了利潤。' },
+            { no: 22, en: 'quality control', zh: '品管', enEx: 'Quality control performed strictly ensures safety.', zhEx: '嚴格執行的品管確保安全。' },
+            { no: 23, en: 'inspection', zh: '檢查', enEx: 'Inspections carried out regularly prevent defects.', zhEx: '定期進行的檢查避免瑕疵。' },
+            { no: 24, en: 'machinery', zh: '機械', enEx: 'Machinery operated by experts reduces risk.', zhEx: '由專家操作的機械降低風險。' },
+            { no: 25, en: 'equipment', zh: '設備', enEx: 'Equipment maintained properly lasts longer.', zhEx: '妥善維護的設備能使用更久。' },
+            { no: 26, en: 'automation', zh: '自動化', enEx: 'Automation introduced recently increased efficiency.', zhEx: '最近引進的自動化提升了效率。' },
+            { no: 27, en: 'tool', zh: '工具', enEx: 'Tools used in assembly require calibration.', zhEx: '組裝中使用的工具需要校準。' },
+            { no: 28, en: 'resource', zh: '資源', enEx: 'Resources managed effectively reduce waste.', zhEx: '有效管理的資源能減少浪費。' },
+            { no: 29, en: 'material', zh: '材料', enEx: 'Materials delivered late delayed production.', zhEx: '晚到的材料延誤了生產。' },
+            { no: 30, en: 'raw material', zh: '原料', enEx: 'Raw materials imported from abroad are costly.', zhEx: '從國外進口的原料很昂貴。' },
+            { no: 31, en: 'component', zh: '零件', enEx: 'Components produced locally lower costs.', zhEx: '當地生產的零件降低成本。' },
+            { no: 32, en: 'part', zh: '部件', enEx: 'Parts missing from the shipment caused delays.', zhEx: '缺少的部件導致延誤。' },
+            { no: 33, en: 'item', zh: '項目 / 物品', enEx: 'Items listed in the invoice must be checked.', zhEx: '發票列出的項目必須檢查。' },
+            { no: 34, en: 'product', zh: '產品', enEx: 'Products tested before shipping meet quality standards.', zhEx: '出貨前測試的產品符合品質標準。' },
+            { no: 35, en: 'service', zh: '服務', enEx: 'Services provided by the company include repair.', zhEx: '公司提供的服務包含維修。' },
+            { no: 36, en: 'project', zh: '專案', enEx: 'Projects managed well succeed faster.', zhEx: '管理良好的專案成功更快。' },
+            { no: 37, en: 'task', zh: '任務', enEx: 'Tasks assigned clearly improve productivity.', zhEx: '明確分配的任務提升生產力。' },
+            { no: 38, en: 'assignment', zh: '指派的工作', enEx: 'Assignments finished early reduce stress.', zhEx: '提前完成的工作減少壓力。' },
+            { no: 39, en: 'team', zh: '團隊', enEx: 'Teams working together achieve goals faster.', zhEx: '一起合作的團隊更快達成目標。' },
+            { no: 40, en: 'leader', zh: '領導者', enEx: 'Leaders respected by staff inspire motivation.', zhEx: '受員工尊敬的領導者激勵士氣。' },
+            { no: 41, en: 'member', zh: '成員', enEx: 'Members working actively contribute to success.', zhEx: '積極工作的成員對成功有貢獻。' },
+            { no: 42, en: 'staff', zh: '職員', enEx: 'Staff trained regularly provide better service.', zhEx: '定期受訓的職員提供更好的服務。' },
+            { no: 43, en: 'employee', zh: '員工', enEx: 'Employees motivated by bonuses work harder.', zhEx: '被獎金激勵的員工更努力工作。' },
+            { no: 44, en: 'colleague', zh: '同事', enEx: 'Colleagues sharing ideas improve teamwork.', zhEx: '分享想法的同事提升團隊合作。' },
+            { no: 45, en: 'manager', zh: '經理', enEx: 'Managers making quick decisions save time.', zhEx: '做出快速決策的經理節省時間。' },
+            { no: 46, en: 'supervisor', zh: '主管', enEx: 'Supervisors monitoring production ensure quality.', zhEx: '監督生產的主管確保品質。' },
+            { no: 47, en: 'department', zh: '部門', enEx: 'Departments cooperating smoothly reach goals faster.', zhEx: '順利合作的部門更快達成目標。' },
+            { no: 48, en: 'division', zh: '部門 / 分部', enEx: 'Divisions specializing in logistics reduce errors.', zhEx: '專門處理物流的部門減少錯誤。' },
+            { no: 49, en: 'branch', zh: '分公司', enEx: 'Branches located overseas support global sales.', zhEx: '位於海外的分公司支援全球銷售。' },
+            { no: 50, en: 'office', zh: '辦公室', enEx: 'Offices designed efficiently improve productivity.', zhEx: '設計有效率的辦公室提升生產力。' },
+            { no: 51, en: 'company', zh: '公司', enEx: 'Companies expanding abroad face new challenges.', zhEx: '向海外擴展的公司面臨新挑戰。' },
+            { no: 52, en: 'organization', zh: '組織', enEx: 'Organizations adapting quickly stay competitive.', zhEx: '快速調整的組織保持競爭力。' },
+            { no: 53, en: 'enterprise', zh: '企業', enEx: 'Enterprises focusing on innovation grow rapidly.', zhEx: '專注創新的企業快速成長。' },
+            { no: 54, en: 'contract', zh: '合約', enEx: 'Contracts signed electronically save time.', zhEx: '電子簽署的合約節省時間。' },
+            { no: 55, en: 'agreement', zh: '協議', enEx: 'Agreements reached smoothly strengthen partnerships.', zhEx: '順利達成的協議加強合作關係。' },
+            { no: 56, en: 'clause', zh: '條款', enEx: 'Clauses written clearly avoid disputes.', zhEx: '清楚撰寫的條款避免爭議。' },
+            { no: 57, en: 'term', zh: '條件 / 期限', enEx: 'Terms explained well prevent confusion.', zhEx: '解釋清楚的條件避免混淆。' },
+            { no: 58, en: 'condition', zh: '條件', enEx: 'Conditions attached to the contract must be met.', zhEx: '附加在合約上的條件必須遵守。' },
+            { no: 59, en: 'signature', zh: '簽名', enEx: 'Signatures collected electronically ensure speed.', zhEx: '電子收集的簽名確保速度。' },
+            { no: 60, en: 'document', zh: '文件', enEx: 'Documents stored safely prevent data loss.', zhEx: '安全保存的文件避免資料遺失。' },
+            { no: 61, en: 'record', zh: '紀錄', enEx: 'Records kept digitally are easy to access.', zhEx: '以數位保存的紀錄容易存取。' },
+            { no: 62, en: 'report', zh: '報告', enEx: 'Reports submitted on time improve decisions.', zhEx: '準時提交的報告改善決策。' },
+            { no: 63, en: 'file', zh: '檔案', enEx: 'Files organized neatly save search time.', zhEx: '整理整齊的檔案節省搜尋時間。' },
+            { no: 64, en: 'memo', zh: '備忘錄', enEx: 'Memos distributed to staff clarify rules.', zhEx: '發送給員工的備忘錄釐清規則。' },
+            { no: 65, en: 'notice', zh: '通知', enEx: 'Notices posted on the board inform employees.', zhEx: '張貼在佈告欄的通知告知員工。' },
+            { no: 66, en: 'announcement', zh: '公告', enEx: 'Announcements made online spread quickly.', zhEx: '在線發佈的公告迅速傳播。' },
+            { no: 67, en: 'policy', zh: '政策', enEx: 'Policies updated regularly reflect new rules.', zhEx: '定期更新的政策反映新規定。' },
+            { no: 68, en: 'regulation', zh: '規範', enEx: 'Regulations enforced strictly ensure safety.', zhEx: '嚴格執行的規範確保安全。' },
+            { no: 69, en: 'procedure', zh: '程序', enEx: 'Procedures followed carefully reduce risks.', zhEx: '謹慎遵守的程序降低風險。' },
+            { no: 70, en: 'guideline', zh: '指南', enEx: 'Guidelines explained clearly help employees.', zhEx: '清楚解釋的指南幫助員工。' },
+            { no: 71, en: 'instruction', zh: '指示', enEx: 'Instructions given by experts avoid mistakes.', zhEx: '由專家給的指示避免錯誤。' },
+            { no: 72, en: 'plan', zh: '計畫', enEx: 'Plans prepared early ensure smooth execution.', zhEx: '提早準備的計畫確保順利執行。' },
+            { no: 73, en: 'strategy', zh: '策略', enEx: 'Strategies designed effectively improve growth.', zhEx: '有效設計的策略改善成長。' },
+            { no: 74, en: 'objective', zh: '目標', enEx: 'Objectives defined clearly are easier to achieve.', zhEx: '明確定義的目標更容易達成。' },
+            { no: 75, en: 'goal', zh: '目標', enEx: 'Goals set realistically motivate employees.', zhEx: '設定實際的目標激勵員工。' },
+            { no: 76, en: 'target', zh: '目標', enEx: 'Targets reached successfully increase confidence.', zhEx: '成功達到的目標增加信心。' },
+            { no: 77, en: 'solution', zh: '解決方案', enEx: 'Solutions suggested by experts solve problems.', zhEx: '專家提出的解決方案能解決問題。' },
+            { no: 78, en: 'problem', zh: '問題', enEx: 'Problems ignored too long become serious.', zhEx: '被忽視太久的問題會變嚴重。' },
+            { no: 79, en: 'issue', zh: '議題', enEx: 'Issues discussed openly improve trust.', zhEx: '被公開討論的議題改善信任。' },
+            { no: 80, en: 'concern', zh: '關切 / 擔憂', enEx: 'Concerns raised by employees should be addressed.', zhEx: '員工提出的擔憂應該被處理。' },
+            { no: 81, en: 'opportunity', zh: '機會', enEx: 'Opportunities created by new markets drive growth.', zhEx: '新市場創造的機會推動成長。' },
+            { no: 82, en: 'risk', zh: '風險', enEx: 'Risks managed properly reduce losses.', zhEx: '妥善管理的風險降低損失。' },
+            { no: 83, en: 'hazard', zh: '危害', enEx: 'Hazards identified early prevent accidents.', zhEx: '提早發現的危害能防止事故。' },
+            { no: 84, en: 'safety', zh: '安全', enEx: 'Safety maintained strictly protects workers.', zhEx: '嚴格維持的安全保護工人。' },
+            { no: 85, en: 'security', zh: '安全 / 保安', enEx: 'Security strengthened recently deters theft.', zhEx: '最近加強的保安防止竊盜。' },
+            { no: 86, en: 'insurance', zh: '保險', enEx: 'Insurance covering accidents reduces risks.', zhEx: '涵蓋事故的保險降低風險。' },
+            { no: 87, en: 'coverage', zh: '保險範圍', enEx: 'Coverage extended widely protects assets.', zhEx: '擴大的保險範圍保護資產。' },
+            { no: 88, en: 'claim', zh: '理賠', enEx: 'Claims processed quickly satisfy customers.', zhEx: '迅速處理的理賠讓顧客滿意。' },
+            { no: 89, en: 'compensation', zh: '補償', enEx: 'Compensation offered fairly builds trust.', zhEx: '公平提供的補償建立信任。' },
+            { no: 90, en: 'payment', zh: '付款', enEx: 'Payments made online are convenient.', zhEx: '在線進行的付款很方便。' },
+            { no: 91, en: 'refund', zh: '退款', enEx: 'Refunds issued promptly improve reputation.', zhEx: '及時發放的退款改善聲譽。' },
+            { no: 92, en: 'deposit', zh: '存款 / 訂金', enEx: 'Deposits paid in advance confirm bookings.', zhEx: '提前支付的訂金確認預訂。' },
+            { no: 93, en: 'transfer', zh: '轉帳', enEx: 'Transfers handled electronically save time.', zhEx: '電子處理的轉帳節省時間。' },
+            { no: 94, en: 'withdrawal', zh: '提款', enEx: 'Withdrawals made at ATMs are fast.', zhEx: '在提款機進行的提款很快。' },
+            { no: 95, en: 'balance', zh: '餘額', enEx: 'Balances updated automatically ensure accuracy.', zhEx: '自動更新的餘額確保準確性。' },
+            { no: 96, en: 'account', zh: '帳戶', enEx: 'Accounts managed carefully avoid errors.', zhEx: '謹慎管理的帳戶避免錯誤。' },
+            { no: 97, en: 'loan', zh: '貸款', enEx: 'Loans approved quickly support businesses.', zhEx: '快速批准的貸款支援企業。' },
+            { no: 98, en: 'interest', zh: '利息', enEx: 'Interests charged monthly increase costs.', zhEx: '每月收取的利息增加成本。' },
+            { no: 99, en: 'fee', zh: '費用', enEx: 'Fees charged unfairly upset customers.', zhEx: '不公平收取的費用讓顧客不滿。' },
+            { no: 100, en: 'charge', zh: '費用 / 收費', enEx: 'Charges listed clearly prevent disputes.', zhEx: '清楚列出的收費避免爭議。' },
+            { no: 101, en: 'fine', zh: '罰款', enEx: 'Fines imposed strictly enforce rules.', zhEx: '嚴格實施的罰款強化規則。' },
+            { no: 102, en: 'award', zh: '獎項', enEx: 'Awards given annually recognize achievements.', zhEx: '每年頒發的獎項表彰成就。' },
+            { no: 103, en: 'bonus', zh: '獎金', enEx: 'Bonuses offered generously motivate employees.', zhEx: '大方提供的獎金激勵員工。' },
+            { no: 104, en: 'salary', zh: '薪水', enEx: 'Salaries paid fairly retain workers.', zhEx: '公平支付的薪水留住員工。' },
+            { no: 105, en: 'wage', zh: '工資', enEx: 'Wages increased recently improve morale.', zhEx: '最近增加的工資提升士氣。' },
+            { no: 106, en: 'income', zh: '收入', enEx: 'Incomes earned steadily support families.', zhEx: '穩定賺取的收入支撐家庭。' },
+            { no: 107, en: 'expense', zh: '支出', enEx: 'Expenses controlled carefully save money.', zhEx: '謹慎控制的支出節省金錢。' },
+            { no: 108, en: 'cost', zh: '成本', enEx: 'Costs reduced by automation increase profit.', zhEx: '自動化降低的成本增加利潤。' },
+            { no: 109, en: 'profit', zh: '利潤', enEx: 'Profits rising steadily attract investors.', zhEx: '穩定上升的利潤吸引投資人。' },
+            { no: 110, en: 'loss', zh: '損失', enEx: 'Losses caused by delays hurt business.', zhEx: '延誤造成的損失損害業務。' },
+            { no: 111, en: 'forecast', zh: '預測', enEx: 'Forecasts made accurately guide planning.', zhEx: '精準做出的預測指引計畫。' },
+            { no: 112, en: 'estimate', zh: '估算', enEx: 'Estimates calculated carefully improve budgeting.', zhEx: '謹慎計算的估算改善預算。' },
+            { no: 113, en: 'trend', zh: '趨勢', enEx: 'Trends analyzed correctly reveal opportunities.', zhEx: '正確分析的趨勢揭示機會。' },
+            { no: 114, en: 'analysis', zh: '分析', enEx: 'Analyses conducted thoroughly support strategy.', zhEx: '徹底進行的分析支援策略。' },
+            { no: 115, en: 'statistic', zh: '統計數據', enEx: 'Statistics collected regularly show progress.', zhEx: '定期收集的統計數據顯示進展。' },
+            { no: 116, en: 'figure', zh: '數字', enEx: 'Figures presented clearly avoid confusion.', zhEx: '清楚呈現的數字避免混淆。' },
+            { no: 117, en: 'chart', zh: '圖表', enEx: 'Charts created visually explain data well.', zhEx: '視覺化製作的圖表很好解釋數據。' },
+            { no: 118, en: 'graph', zh: '圖表', enEx: 'Graphs showing growth impress investors.', zhEx: '顯示成長的圖表打動投資人。' },
+            { no: 119, en: 'summary', zh: '摘要', enEx: 'Summaries written concisely save time.', zhEx: '簡潔撰寫的摘要節省時間。' },
+            { no: 120, en: 'review', zh: '評估', enEx: 'Reviews given by experts guide improvements.', zhEx: '專家提供的評估指引改進。' },
+            { no: 121, en: 'evaluation', zh: '評估', enEx: 'Evaluations carried out yearly check performance.', zhEx: '每年進行的評估檢查表現。' },
+            { no: 122, en: 'appraisal', zh: '評價', enEx: 'Appraisals done fairly encourage employees.', zhEx: '公平進行的評價鼓勵員工。' },
+            { no: 123, en: 'training', zh: '訓練', enEx: 'Training conducted properly builds skills.', zhEx: '妥善進行的訓練培養技能。' },
+            { no: 124, en: 'seminar', zh: '研討會', enEx: 'Seminars attended by managers share knowledge.', zhEx: '經理參加的研討會分享知識。' },
+            { no: 125, en: 'workshop', zh: '工作坊', enEx: 'Workshops organized well improve learning.', zhEx: '規劃良好的工作坊改善學習。' },
+            { no: 126, en: 'lecture', zh: '演講', enEx: 'Lectures delivered clearly engage audiences.', zhEx: '清楚進行的演講吸引聽眾。' },
+            { no: 127, en: 'presentation', zh: '簡報', enEx: 'Presentations prepared well impress clients.', zhEx: '準備充分的簡報打動客戶。' },
+            { no: 128, en: 'session', zh: '會議 / 場次', enEx: 'Sessions scheduled carefully avoid overlap.', zhEx: '仔細排程的會議避免重疊。' },
+            { no: 129, en: 'participant', zh: '參加者', enEx: 'Participants registered early secure seats.', zhEx: '早註冊的參加者確保座位。' },
+            { no: 130, en: 'attendee', zh: '出席者', enEx: 'Attendees arriving late miss details.', zhEx: '晚到的出席者錯過細節。' },
+            { no: 131, en: 'speaker', zh: '講者', enEx: 'Speakers invited internationally raise prestige.', zhEx: '國際邀請的講者提升聲望。' },
+            { no: 132, en: 'instructor', zh: '講師', enEx: 'Instructors explaining clearly aid learning.', zhEx: '清楚解釋的講師幫助學習。' },
+            { no: 133, en: 'consultant', zh: '顧問', enEx: 'Consultants hired externally bring expertise.', zhEx: '外聘的顧問帶來專業知識。' },
+            { no: 134, en: 'advisor', zh: '顧問', enEx: 'Advisors trusted by clients strengthen ties.', zhEx: '受客戶信任的顧問加強關係。' },
+            { no: 135, en: 'executive', zh: '高階主管', enEx: 'Executives making bold decisions drive growth.', zhEx: '做出大膽決策的高階主管推動成長。' },
+            { no: 136, en: 'administrator', zh: '管理員', enEx: 'Administrators managing systems ensure order.', zhEx: '管理系統的管理員確保秩序。' },
+            { no: 137, en: 'officer', zh: '官員 / 幹部', enEx: 'Officers enforcing rules maintain discipline.', zhEx: '執行規則的官員維持紀律。' },
+            { no: 138, en: 'agent', zh: '代理人', enEx: 'Agents representing firms close deals.', zhEx: '代表公司的代理人完成交易。' },
+            { no: 139, en: 'official', zh: '官員', enEx: 'Officials attending meetings approve policies.', zhEx: '出席會議的官員批准政策。' },
+            { no: 140, en: 'authority', zh: '權威 / 當局', enEx: 'Authorities regulating markets ensure fairness.', zhEx: '管制市場的當局確保公平。' },
+            { no: 141, en: 'leader', zh: '領導者', enEx: 'Leaders guiding effectively inspire trust.', zhEx: '有效指導的領導者激發信任。' },
+            { no: 142, en: 'director', zh: '董事 / 主任', enEx: 'Directors approving budgets control spending.', zhEx: '批准預算的董事控制支出。' },
+            { no: 143, en: 'manager', zh: '經理', enEx: 'Managers handling logistics streamline operations.', zhEx: '處理物流的經理簡化運作。' },
+            { no: 144, en: 'supervisor', zh: '主管', enEx: 'Supervisors guiding workers reduce mistakes.', zhEx: '指導工人的主管減少錯誤。' },
+            { no: 145, en: 'staff', zh: '員工', enEx: 'Staff following rules maintain safety.', zhEx: '遵守規則的員工維持安全。' },
+            { no: 146, en: 'personnel', zh: '人員', enEx: 'Personnel trained overseas bring new skills.', zhEx: '海外受訓的人員帶來新技能。' },
+            { no: 147, en: 'employee', zh: '員工', enEx: 'Employees staying loyal strengthen companies.', zhEx: '忠誠的員工強化公司。' },
+            { no: 148, en: 'colleague', zh: '同事', enEx: 'Colleagues cooperating well achieve goals.', zhEx: '合作良好的同事達成目標。' },
+            { no: 149, en: 'member', zh: '成員', enEx: 'Members contributing ideas improve projects.', zhEx: '提供想法的成員改善專案。' },
+            { no: 150, en: 'headquarters', zh: '總部', enEx: 'Headquarters located in the capital manage branches.', zhEx: '位於首都的總部管理分公司。' }
+             ];
+
+        // Utilities
+        function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[b[i], b[j]] = [b[j], b[i]] } return b }
+
+        // State
+        let deck = shuffle(VOCAB.slice());
+        let idx = 0;
+        let flipped = false;
+        let autoplay = false;
+        let timer = null;
+
+        // Elements
+        const cardEl = document.getElementById('card');
+        const wordEl = document.getElementById('word');
+        const exEl = document.getElementById('ex');
+        const zhEl = document.getElementById('zh');
+        const zhExEl = document.getElementById('zhEx');
+        const metaFront = document.getElementById('metaFront');
+        const counter = document.getElementById('counter');
+        const previewGrid = document.getElementById('previewGrid');
+        const intervalInput = document.getElementById('interval');
+        const autoBtn = document.getElementById('autoBtn');
+        const exportBtn = document.getElementById('exportBtn');
+
+        function render() {
+            const c = deck[idx];
+            wordEl.textContent = c.en;
+            exEl.textContent = c.enEx;
+            zhEl.textContent = c.zh;
+            zhExEl.textContent = c.zhEx;
+            metaFront.textContent = 'No. ' + c.no;
+            counter.textContent = `卡片 ${idx + 1} / ${deck.length}`;
+            cardEl.classList.toggle('flipped', flipped);
+
+            // speakWord(c.en);            
+        }
+
+        function nextCard() { idx = (idx + 1) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function prevCard() { idx = (idx - 1 + deck.length) % deck.length; flipped = false; render(); const c = deck[idx]; speakWord(c.en); }
+        function randomCard() { idx = Math.floor(Math.random() * deck.length); flipped = false; render();  const c = deck[idx]; speakWord(c.en);}
+        function reshuffle() { deck = shuffle(deck); idx = 0; flipped = false; render(); buildPreview(); }
+
+        function startAuto() { autoplay = true; autoBtn.textContent = '停止自動'; timer = setInterval(() => { nextCard(); }, Math.max(500, Number(intervalInput.value) || 2000)); }
+        function stopAuto() { autoplay = false; autoBtn.textContent = '開始自動'; clearInterval(timer); timer = null; }
+        function toggleAuto() { if (autoplay) stopAuto(); else startAuto(); }
+
+        // Events
+        document.getElementById('shuffleBtn').addEventListener('click', () => { reshuffle(); });
+        document.getElementById('randomBtn').addEventListener('click', () => { randomCard(); });
+        document.getElementById('nextBtn').addEventListener('click', () => { nextCard(); });
+        document.getElementById('prevBtn').addEventListener('click', () => { prevCard(); });
+        document.getElementById('flipBtn').addEventListener('click', () => { flipped = !flipped; render(); });
+        autoBtn.addEventListener('click', () => { toggleAuto(); });
+        exportBtn.addEventListener('click', () => { exportCSV(); });
+
+        cardEl.addEventListener('click', () => { flipped = !flipped; render(); });
+        cardEl.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+        });
+
+        intervalInput.addEventListener('change', () => { if (autoplay) { stopAuto(); startAuto(); } });
+
+        // Build preview grid
+        function buildPreview() {
+            previewGrid.innerHTML = ''; deck.forEach((d, i) => {
+                const btn = document.createElement('button'); btn.className = 'chip'; btn.textContent = d.no + '. ' + d.en; btn.addEventListener('click', () => { idx = i; flipped = false; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }); previewGrid.appendChild(btn);
+            })
+        }
+
+        // Export current deck to CSV
+        function exportCSV() {
+            const rows = [['No', 'Vocabulary', 'Chinese', 'Example (EN)', '例句 (中)']];
+            deck.forEach(d => rows.push([d.no, d.en, d.zh, d.enEx, d.zhEx]));
+            const csv = rows.map(r => r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'Day1_Flashcards_1-150.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        }
+
+        // Init
+        render(); buildPreview();
+
+        // Global keyboard navigation when card not focused
+        window.addEventListener('keydown', (e) => {
+            if (document.activeElement === cardEl) return;
+            if (e.key === 'ArrowRight') { nextCard(); }
+            if (e.key === 'ArrowLeft') { prevCard(); }
+            if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
+        });
+        
+        const speakBtn = document.getElementById('speakBtn');
+
+        function speakWord(word) {
+            if (!window.speechSynthesis) return;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US'; // 英文發音
+            window.speechSynthesis.cancel(); // 先停止前一個發音
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 點擊按鈕發音
+
+        speakBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
+            speakWord(deck[idx].en);
+        });
+
+    </script>
+    
+</body>
+
+</html>
