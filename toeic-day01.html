@@ -93,12 +93,27 @@
         .card.flipped {
             transform: rotateY(180deg)
         }
-        
-        .card-text {
-        opacity: 1 !important; /* 保持文字可見 */
-        animation: fadeIn 0.5s ease-in forwards; /* 動畫結束後保持狀態 */
-        transform: translateZ(0); /* 硬體加速，避免手機閃爍 */
-        }
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+.card-text {
+  opacity: 1 !important; /* 保持文字可見 */
+  animation: fadeIn 0.5s ease-in forwards; /* 動畫結束後保持狀態 */
+  transform: translateZ(0); /* 硬體加速，避免手機閃爍 */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 翻頁效果 */
+.card.flipped .card-front { transform: rotateY(180deg); }
+.card.flipped .card-back { transform: rotateY(0deg); }
+
+
         .face {
             position: absolute;
             inset: 0;
