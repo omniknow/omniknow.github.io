@@ -94,26 +94,6 @@
             transform: rotateY(180deg)
         }
 
-.card-back {
-  transform: rotateY(180deg);
-}
-
-.card-text {
-  opacity: 1 !important; /* 保持文字可見 */
-  animation: fadeIn 0.5s ease-in forwards; /* 動畫結束後保持狀態 */
-  transform: translateZ(0); /* 硬體加速，避免手機閃爍 */
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* 翻頁效果 */
-.card.flipped .card-front { transform: rotateY(180deg); }
-.card.flipped .card-back { transform: rotateY(0deg); }
-
-
         .face {
             position: absolute;
             inset: 0;
@@ -548,27 +528,6 @@
             event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
             speakWord(deck[idx].en);
         });
-const cards = document.querySelectorAll('.card');
-
-cards.forEach(card => {
-  card.addEventListener('click', () => {
-    card.classList.toggle('flipped');
-
-    // 修正手機可能消失的文字
-    const text = card.querySelector('.card-text');
-    if (text) {
-      text.style.opacity = '1'; // 強制文字顯示
-      // 清除可能干擾的定時器
-      if (text._hideTimeout) clearTimeout(text._hideTimeout);
-    }
-  });
-
-  // 防止觸控事件隱藏文字
-  card.addEventListener('touchend', () => {
-    const text = card.querySelector('.card-text');
-    if (text) text.style.opacity = '1';
-  });
-});
 
     </script>
     
