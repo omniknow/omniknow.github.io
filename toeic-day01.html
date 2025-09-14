@@ -233,6 +233,7 @@
                 <div class="face front">
                     <div class="meta" id="metaFront">No. 1</div>
                     <div class="word" id="word">office</div>
+                    <button id="speakBtn" class="btn" style="margin-top:8px;padding:4px 8px;font-size:14px;">🔊 發音</button>
                     <div class="ex" id="ex">She works in a big office in Taipei.</div>
                 </div>
                 <div class="face back">
@@ -452,6 +453,8 @@
             metaFront.textContent = 'No. ' + c.no;
             counter.textContent = `卡片 ${idx + 1} / ${deck.length}`;
             cardEl.classList.toggle('flipped', flipped);
+
+            // speakWord(c.en);            
         }
 
         function nextCard() { idx = (idx + 1) % deck.length; flipped = false; render(); }
@@ -508,8 +511,26 @@
             if (e.key === 'ArrowLeft') { prevCard(); }
             if (e.code === 'Space') { e.preventDefault(); flipped = !flipped; render(); }
         });
+        
+        const speakBtn = document.getElementById('speakBtn');
+
+        function speakWord(word) {
+            if (!window.speechSynthesis) return;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US'; // 英文發音
+            window.speechSynthesis.cancel(); // 先停止前一個發音
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 點擊按鈕發音
+
+        speakBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
+            speakWord(deck[idx].en);
+        });
 
     </script>
+    
 </body>
 
 </html>
