@@ -93,13 +93,12 @@
         .card.flipped {
             transform: rotateY(180deg)
         }
-
+        
         .card-text {
         opacity: 1 !important; /* 保持文字可見 */
         animation: fadeIn 0.5s ease-in forwards; /* 動畫結束後保持狀態 */
         transform: translateZ(0); /* 硬體加速，避免手機閃爍 */
         }
-        
         .face {
             position: absolute;
             inset: 0;
@@ -531,7 +530,7 @@
         // 點擊按鈕發音
 
         speakBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
+            //event.stopPropagation(); // 阻止冒泡，不會觸發卡片翻面
             speakWord(deck[idx].en);
         });
 
